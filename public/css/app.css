@@ -133,6 +133,12 @@ h1 {
   display: none;
 }
 
+.error-message {
+  color: red;
+  font-size: 11px;
+  margin-top: 3px;
+}
+
 /*!
  * Bootstrap v4.2.1 (https://getbootstrap.com/)
  * Copyright 2011-2018 The Bootstrap Authors

@@ -3,9 +3,9 @@
     <div class="list-group panel">
         <a href="/admin" class="list-group-item list-group-item strong"> <i class="front-icon fa fa-home"></i> Dashboard </a>
         <a href="#users" class="list-group-item list-group-item strong" data-toggle="collapse" data-parent="#MainMenu"><i class="front-icon fa fa-user"></i> Users <i class="back-icon fa fa-chevron-down float-right "></i></a>
-        <div class="collapse list-group-submenu" id="orders">
-            <a href="#" class="list-group-item">All users</a>
-            <a href="#" class="list-group-item">Add user</a>
+        <div class="collapse list-group-submenu" id="users">
+            <a href="/admin/users" class="list-group-item">All users</a>
+            <a href="/admin/users/create" class="list-group-item">Add user</a>
         </div>
         <a href="#pages" class="list-group-item list-group-item strong" data-toggle="collapse" data-parent="#MainMenu"><i class="front-icon fa fa-file"></i> Pages <i class="back-icon fa fa-chevron-down float-right "></i></a>
         <div class="collapse list-group-submenu" id="pages">
