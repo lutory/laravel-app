@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AdminUsersRequest;
+use App\Photo;
 use App\User;
 use App\Role;
 use Illuminate\Http\Request;
@@ -17,6 +18,8 @@ class AdminUsersController extends Controller
     public function index()
     {
         $users = User::all();
+
+
 
         return view('admin.users.index', compact('users'));
     }
@@ -43,9 +46,16 @@ class AdminUsersController extends Controller
         $user = new User();
         $user->name = $request->input('name');
         $user->email = $request->input('email');
-        $user->password = $request->input('password');
+        $user->password = bcrypt($request->input('password'));
         $user->is_active = $request->input('is_active');
         $user->role_id = $request->input('role_id');
+
+        if( $file = $request->file('photo_id') ){
+            $name = time().$file->getClientOriginalName();
+            $file->move('images/profile', $name);
+            $photo = Photo::create(['file'=>$name]);
+            $user->photo_id = $photo->id;
+        }
 
         $user->save();
 
