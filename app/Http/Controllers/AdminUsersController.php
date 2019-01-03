@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AdminUsersRequest;
+use App\Http\Requests\AdminEditUserRequest;
 use App\Photo;
 use App\User;
 use App\Role;
@@ -46,7 +47,7 @@ class AdminUsersController extends Controller
         $user = new User();
         $user->name = $request->input('name');
         $user->email = $request->input('email');
-        $user->password = bcrypt($request->input('password'));
+        $user->password = bcrypt(trim($request->input('password')));
         $user->is_active = $request->input('is_active');
         $user->role_id = $request->input('role_id');
 
@@ -82,7 +83,9 @@ class AdminUsersController extends Controller
      */
     public function edit($id)
     {
-        return view('admin.users.edit');
+        $user = User::findOrFail($id);
+        $roles = Role::pluck('name','id')->all();
+        return view('admin.users.edit', compact(['user','roles']));
     }
 
     /**
@@ -92,9 +95,27 @@ class AdminUsersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(AdminEditUserRequest $request, $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        if($request->input('password')){
+            $user->password = bcrypt(trim($request->input('password')));
+        }
+        $user->is_active = $request->input('is_active');
+        $user->role_id = $request->input('role_id');
+
+        if( $file = $request->file('photo_id') ){
+            $name = time().$file->getClientOriginalName();
+            $file->move('images/profile', $name);
+            $photo = Photo::create(['file'=>$name]);
+            $user->photo_id = $photo->id;
+        }
+
+        $user->save();
+
+        return redirect('/admin/users');
     }
 
     /**

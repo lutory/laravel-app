@@ -21,8 +21,8 @@
         @foreach($users as $user)
             <tr>
                 <th>{{$user->id}}</th>
-                <td><img style="width: 30px;height: 30px" src="/images/profile/{{ is_null($user->photo_id) ? "default.jpg" : $user->photo->file }}" /></td>
-                <td>{{$user->name}}</td>
+                <td><img style="width: 30px;height: 30px" src="{{ $user->photo ?  $user->photo->file : "/images/profile/default.jpg"}}" /></td>
+                <td><a href="{{ route('users.edit',$user->id) }}">{{$user->name}}</a></td>
                 <td>{{$user->email}}</td>
                 <td>{{$user->role->name}}</td>
                 <td>{{$user->created_at->diffForHumans()}}</td>
