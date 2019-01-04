@@ -3,12 +3,12 @@
 
         <div class="btn-group float-right">
             <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                John Doe
+                {{Auth::user()->name}}
             </button>
             <div class="dropdown-menu dropdown-menu-right">
                 <a class="dropdown-item" href="#">Profile</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Logout</a>
+                <a class="dropdown-item" href="{{ route('logout')  }}">Logout</a>
             </div>
         </div>
 

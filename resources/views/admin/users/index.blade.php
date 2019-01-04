@@ -1,7 +1,14 @@
 @extends('layouts.admin')
 
 @section('content')
+
+
+
     <h1>Users</h1>
+
+    @if( session('deleted_user') )
+        @include('inc.flashmsg',['type'=>'success','msg'=>session('deleted_user')])
+    @endif
 
     @if(count($users)>0)
     <table class="table table-striped table-hover table-sm">
