@@ -21,8 +21,6 @@ class AdminUsersController extends Controller
     {
         $users = User::all();
 
-
-
         return view('admin.users.index', compact('users'));
     }
 
@@ -128,7 +126,9 @@ class AdminUsersController extends Controller
     public function destroy($id)
     {
         $user = User::findOrfail($id);
-        unlink(public_path().$user->photo->file);
+        if($user->photo){
+            unlink(public_path().$user->photo->getUserImagePath($user->photo->file));
+        }
         $user->delete();
 
 

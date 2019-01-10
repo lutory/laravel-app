@@ -7,14 +7,28 @@ use Illuminate\Database\Eloquent\Model;
 class Photo extends Model
 {
     protected $fillable = ['file'];
-    protected $uploadFolder = '/images/profile/';
+    protected $uploadFolder = '/images/';
+    protected $uploadPostsFolder = '/images/posts/';
+    protected $uploadUsersFolder = '/images/profile/';
     protected $defaultPhoto = 'default.jpg';
 
-    public function getFileAttribute($photo){
+//    public function getFileAttribute($photo){
+//        if($photo){
+//            return $this->uploadFolder.$photo;
+//        }
+//        return $this->uploadFolder.$this->defaultPhoto;
+//    }
+    public function getPostImagePath($photo){
         if($photo){
-            return $this->uploadFolder.$photo;
+            return $this->uploadPostsFolder.$photo;
         }
-        return $this->uploadFolder.$this->defaultPhoto;
+
     }
+    public function getUserImagePath($photo){
+        if($photo){
+            return $this->uploadUsersFolder.$photo;
+        }
+    }
+
 
 }

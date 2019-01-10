@@ -7,7 +7,7 @@
 
     <div class="row">
         <div class="col-2">
-            <img width="100%" src="{{ $user->photo ?  $user->photo->file : "/images/profile/default.jpg"}}" alt="">
+            <img width="100%" src="{{ ($user->photo) ?  $user->photo->getUserImagePath($user->photo->file) : "/images/profile/default.jpg"}}" alt="">
             <br /><br />
             {!! Form::open(['method' => 'DELETE','action' => ['AdminUsersController@destroy',$user->id],'id'=>'deleteUserForm']) !!}
             <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmDelete" data-form="deleteUserForm" data-title="Delete User" data-message="Are you sure you want to delete this user ?">Delete user</button>
