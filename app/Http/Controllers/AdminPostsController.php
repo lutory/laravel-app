@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AdminPostsRequest;
 use App\Photo;
 use App\Post;
+use App\PostsCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -17,7 +18,7 @@ class AdminPostsController extends Controller
      */
     public function index()
     {
-        $posts = Post::all();
+        $posts = Post::paginate(15);
         return view('admin.posts.index', compact('posts'));
     }
 
@@ -28,7 +29,8 @@ class AdminPostsController extends Controller
      */
     public function create()
     {
-        return view('admin.posts.create');
+        $categories = PostsCategory::pluck('name','id')->all();
+        return view('admin.posts.create',compact('categories'));
     }
 
     /**
@@ -43,8 +45,8 @@ class AdminPostsController extends Controller
         $post->title = $request->input('title');
         $post->body = $request->input('body');
         $post->status = $request->input('status');
+        $post->category_id = $request->input('category_id');
         $post->user_id = auth()->user()->id;
-        $post->category_id = 0;
 
         if( $file = $request->file('photo_id') ){
             $name = time().$file->getClientOriginalName();
@@ -79,8 +81,8 @@ class AdminPostsController extends Controller
     public function edit($id)
     {
         $post = Post::findOrFail($id);
-
-        return view('/admin/posts/edit', compact('post'));
+        $categories = PostsCategory::pluck('name','id')->all();
+        return view('/admin/posts/edit', compact('post','categories'));
     }
 
     /**
@@ -96,7 +98,7 @@ class AdminPostsController extends Controller
         $post->title = $request->input('title');
         $post->body = $request->input('body');
         $post->status = $request->input('status');
-        //$post->category_id = 0;
+        $post->category_id = $request->input('category_id');
 
         if( $file = $request->file('photo_id') ){
             $name = time().$file->getClientOriginalName();

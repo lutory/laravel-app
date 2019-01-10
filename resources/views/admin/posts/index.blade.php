@@ -33,14 +33,16 @@
                     <td><a href="{{ route('posts.edit',['id'=>$post->id]) }}">{{ $post->title }}</a></td>
                     <td style="max-width: 200px">{{ str_limit($post->body, $limit = 50, $end = '...') }}</td>
                     <td>{{ $post->user->name  }}</td>
-                    <td>{{ $post->category_id  }}</td>
+                    <td>{{ $post->category->name  }}</td>
                     <td>{{ $post->created_at->diffForHumans()  }}</td>
                     <td>{{ ($post->updated_at) ? $post->updated_at->diffForHumans() : "-"   }}</td>
                     <td>{{$post->status == '1' ? 'Active' : 'Inactive'}}</td>
                 </tr>
             @endforeach
+
             </tbody>
         </table>
+        {{ $posts->links() }}
     @else
         <p>No posts yet</p>
     @endif

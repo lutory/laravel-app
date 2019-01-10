@@ -23,6 +23,7 @@
         <div class="collapse list-group-submenu" id="posts">
             <a href="{{route('posts.index')}}" class="list-group-item">All Posts</a>
             <a href="{{route('posts.create')}}" class="list-group-item">Add new post</a>
+            <a href="{{route('posts.categories')}}" class="list-group-item">Categories</a>
             <a href="#" class="list-group-item">Tags</a>
         </div>
         <a href="#orders" class="list-group-item list-group-item strong" data-toggle="collapse" data-parent="#MainMenu"><i class="front-icon fa fa-box-open"></i> Orders <i class="back-icon fa fa-chevron-down float-right "></i></a>

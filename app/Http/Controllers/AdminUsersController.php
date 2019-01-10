@@ -107,9 +107,17 @@ class AdminUsersController extends Controller
 
         if( $file = $request->file('photo_id') ){
             $name = time().$file->getClientOriginalName();
-            $file->move('images/profile', $name);
-            $photo = Photo::create(['file'=>$name]);
-            $user->photo_id = $photo->id;
+            $file->move('images/profile',$name);
+            if($user->photo){
+                $photo = Photo::findOrFail($user->photo_id);
+                $photo->file = $name;
+                $photo->save();
+                unlink(public_path().$user->photo->getUserImagePath($user->photo->file));
+            }
+            else{
+                $photo = Photo::create(['file'=>$name]);
+                $user->photo_id = $photo->id;
+            }
         }
 
         $user->save();

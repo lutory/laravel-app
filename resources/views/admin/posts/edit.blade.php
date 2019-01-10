@@ -29,6 +29,12 @@
             </div>
 
             <div class="form-group">
+                {!! Form::label('category_id', 'Category') !!}
+                {!! Form::select('category_id', $categories, null,['placeholder' => 'Pick a category','class'=>'form-control']); !!}
+                {!! $errors->first('category_id','<p class="error-message">:message</p>') !!}
+            </div>
+
+            <div class="form-group">
                 {!! Form::label('photo_id', 'Featured Image') !!}
                 {!! Form::file('photo_id',['class'=>'form-control-file']); !!}
             </div>
