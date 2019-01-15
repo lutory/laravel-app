@@ -9,6 +9,6 @@ class PostsCategory extends Model
     protected $fillable = ['name'];
 
     public function posts(){
-        return $this->hasMany('App\Post');
+        return $this->hasMany('App\Post','category_id');
     }
 }

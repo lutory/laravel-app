@@ -2,101 +2,100 @@
 
 @section('content')
     <h1>Posts Categories</h1>
-
+    <div class="row">
+    <div class="col-6">
     @if(count($categories)>0)
-        <table class="table table-striped table-hover table-sm">
+        <div class="card mb-3">
+            <div class="card-body">
+                <input type="text" placeholder="Type keyword" id="search"/>
+            </div>
+        </div>
+        <table class="table table-striped table-hover table-sm" id="categoriesTable">
             <thead>
             <tr>
                 <th scope="col">Id</th>
                 <th scope="col">Name </th>
-                <th scope="col">Handle</th>
             </tr>
             </thead>
             <tbody>
             @foreach($categories as $category)
                 <tr class="category-row">
-                    <th>{{ $category->id }}</th>
-                    <td class="category-name"><span>{{ $category->name }}</span><input type="text" value="{{ $category->name }}" class="d-none" /></td>
-                    <td>
-                        <button type="button"  class="edit-category btn btn-secondary btn-sm"><i class="fas fa-edit"></i> Edit</button>
-                        <button type="button"  class="save-category btn btn-primary btn-sm d-none" data-id="{{ $category->id }}"><i class="fas fa-save"></i> Save changes</button>
-                        <button type="button" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
-                    </td>
+                    <td>{{ $category->id }}</td>
+                    <td class="category-name"><a href="{{route('post-categories.edit',$category->id)}}">{{ $category->name }}</a></td>
                 </tr>
             @endforeach
             </tbody>
         </table>
-
-
-        <div class="card">
-            <div class="card-body">
-                <h2>Add category</h2>
-                <label for="name">Name:</label>
-                <input type="text" id="name" />
-                <button type="button"  class="add-category btn btn-secondary btn-sm"><i class="fas fa-plus"></i> Add category</button>
-            </div>
-        </div>
-
-
+        <p id="noSearchResult" style="display: none;">No results for: <em>ddd</em></p>
     @else
         <p>No categories yet</p>
     @endif
+    </div>
+    <div class="col-6">
+        <div class="card">
+            <div class="card-body">
+                <h2>Add category</h2>
+                {!! Form::open(['method' => 'POST','action' => 'AdminPostsCategoriesController@store']) !!}
+                <div class="form-group">
+                    {!! Form::label('name', 'Name') !!}
+                    {!! Form::text('name', null,["class"=>"form-control"]) !!}
+                    {!! $errors->first('name','<p class="error-message">:message</p>') !!}
+                </div>
+                <button type="submit"  class="add-category btn btn-secondary btn-sm"><i class="fas fa-plus"></i> Add category</button>
+                {!! Form::close() !!}
 
+            </div>
+        </div>
+    </div>
+    </div>
 @endsection
+
 @section('scripts')
-    <script>
-        $(document).ready(function(){
+<script>
 
-            $(".add-category").on('click', function(){
-                var name = $(this).parent().find('#name').val();
+    $(document).ready(function(){
+
+        $("#search").on('keyup ', function(){
+
+            var search = $(this).val();
+
+            //if(search.length>1){
                 $.ajax({
                     method: "POST",
-                    url: "/admin/post-categories/create",
+                    url: "/admin/post-categories/search",
                     dataType: 'json',
-                    data: { '_token':$('meta[name="csrf-token"]').attr('content'), 'name': name }
-                })
-                .done(function( category ) {
-                    location.reload();
-                });
-
-
-            });
-            $(".edit-category").on('click', function(){
-                var currentCatTd = $(this).parents('.category-row').find('.category-name');
-                currentCatTd.find('input').removeClass('d-none').show().focus();
-                currentCatTd.find('span').hide();
-
-                $(this).hide();
-                $(this).parent().find('.save-category').removeClass('d-none').show();
-
-            });
-            $('.save-category').on('click', function () {
-                var newCatName = $(this).parents('.category-row').find('input').val();
-                var catId = $(this).data('id');
-                var saveBtn = $(this);
-                var editBtn = $(this).parent().find('.edit-category');
-                var catTd = $(this).parents('.category-row').find('.category-name');
-
-                $.ajax({
-                    method: "POST",
-                    url: "/admin/post-categories/edit",
-                    dataType: 'json',
-                    data: { '_token':$('meta[name="csrf-token"]').attr('content'), 'name': newCatName, 'id': catId }
+                    data: { '_token':$('meta[name="csrf-token"]').attr('content'), 'search': search }
                 })
                 .done(function( res ) {
-                    saveBtn.hide();
-                    editBtn.show();
-                    catTd.find('input').hide();
-                    catTd.find('span').text(res.category.name).show();
+
+                    if(res.categories.length>0){
+                        $("#noSearchResult").hide();
+                        var table = $("#categoriesTable");
+                        table.show();
+                        var output = '';
+                        table.find('tbody').empty();
+
+                        $.each(res.categories, function( index, cat ) {
+
+                            output += '<tr>' +
+                                      '<td>'+cat.id+'</td>' +
+                                      '<td><a href="/admin/post-categories/'+cat.id+'/edit">'+cat.name+'</a></td>' +
+                                      '</tr>';
+                        });
+                        table.find('tbody').html(output);
+                    }
+                    else{
+
+                        $("#categoriesTable").hide();
+                        $("#noSearchResult").find('em').text(search);
+                        $("#noSearchResult").show();
+                    }
                 });
-            });
-
-
-
+            //}
 
         });
 
-    </script>
+    });
+
+</script>
 @endsection
-
-

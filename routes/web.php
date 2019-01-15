@@ -28,9 +28,11 @@ Route::get('/admin', function(){
 Route::group(['middleware'=>'admin'], function(){
     Route::resource('/admin/users','AdminUsersController');
     Route::resource('/admin/posts','AdminPostsController');
-    Route::get('/admin/post-categories','AdminPostsCategoriesController@index')->name('posts.categories');
-    Route::post('/admin/post-categories/edit','AdminPostsCategoriesController@edit');
-    Route::post('/admin/post-categories/create','AdminPostsCategoriesController@create');
+    Route::resource('/admin/post-categories','AdminPostsCategoriesController');
+    Route::post('/admin/post-categories/search','AdminPostsCategoriesController@search');
+//    Route::get('/admin/post-categories','AdminPostsCategoriesController@index')->name('posts.categories');
+//    Route::post('/admin/post-categories/edit','AdminPostsCategoriesController@edit');
+//    Route::post('/admin/post-categories/create','AdminPostsCategoriesController@create');
 
     Route::get('/admin/tags','AdminTagsController@index')->name('tags');
     Route::post('/admin/tags','AdminTagsController@index');

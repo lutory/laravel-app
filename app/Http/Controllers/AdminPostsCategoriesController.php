@@ -13,24 +13,42 @@ class AdminPostsCategoriesController extends Controller
         return view('admin.post_categories.index', compact('categories'));
     }
 
-    public function edit( Request $request ){
+    public function edit( $id ){
 
-        $id = $request->id;
-        $name = $request->name;
-        $postCategory = PostsCategory::findOrFail($id);
-        $postCategory->name = $name;
-        $postCategory->save();
-
-        return response()->json(array('category'=> $postCategory), 200);
+        $category = PostsCategory::findOrFail($id);
+        return view('/admin/post_categories/edit', compact('category'));
     }
 
-    public function create( Request $request ){
+    public function update( $id,Request $request ){
 
-        $name = $request->name;
-        $postCategory = new PostsCategory();
-        $postCategory->name = $name;
-        $postCategory->save();
+        $request->validate([
+            'name' => 'required|unique:posts_categories',
+        ]);
 
-        return response()->json(array('category'=> $postCategory), 200);
+        $category = PostsCategory::findOrFail($id);
+        $category->name = $request->name;
+        $category->save();
+
+        return redirect('/admin/post-categories');
+    }
+
+    public function store( Request $request ){
+
+        $request->validate([
+            'name' => 'required|unique:posts_categories',
+        ]);
+
+        $category = new PostsCategory();
+        $category->name = $request->name;
+        $category->save();
+
+        return redirect('/admin/post-categories');
+    }
+
+    public function search( Request $request ){
+
+        $categories = PostsCategory::where('name', 'LIKE', '%'.$request->search.'%')->get();
+
+        return response()->json(array('categories'=> $categories), 200);
     }
 }
