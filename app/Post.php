@@ -23,5 +23,8 @@ class Post extends Model
     public function category(){
         return $this->belongsTo('App\PostsCategory');
     }
+    public function tags(){
+        return $this->morphToMany('App\Tag', 'taggable');
+    }
 
 }

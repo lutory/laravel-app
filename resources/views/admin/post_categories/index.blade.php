@@ -83,11 +83,11 @@
                     dataType: 'json',
                     data: { '_token':$('meta[name="csrf-token"]').attr('content'), 'name': newCatName, 'id': catId }
                 })
-                .done(function( category ) {
+                .done(function( res ) {
                     saveBtn.hide();
                     editBtn.show();
                     catTd.find('input').hide();
-                    catTd.find('span').text(newCatName).show();
+                    catTd.find('span').text(res.category.name).show();
                 });
             });
 

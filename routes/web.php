@@ -31,5 +31,11 @@ Route::group(['middleware'=>'admin'], function(){
     Route::get('/admin/post-categories','AdminPostsCategoriesController@index')->name('posts.categories');
     Route::post('/admin/post-categories/edit','AdminPostsCategoriesController@edit');
     Route::post('/admin/post-categories/create','AdminPostsCategoriesController@create');
+
+    Route::get('/admin/tags','AdminTagsController@index')->name('tags');
+    Route::post('/admin/tags','AdminTagsController@index');
+    Route::post('/admin/tags/edit','AdminTagsController@edit');
+    Route::post('/admin/tags/create','AdminTagsController@create');
+
 });
 
