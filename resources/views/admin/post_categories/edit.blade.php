@@ -25,7 +25,7 @@
         @if(count($category->posts) > 0)
             <ul>
                 @foreach($category->posts as $post)
-                    <li>{{$post->title}}</li>
+                    <li><a href="/admin/posts/{{$post->id}}/edit" target="_blank" >{{$post->title}}</a></li>
                 @endforeach
             </ul>
         @else

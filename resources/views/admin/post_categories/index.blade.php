@@ -19,9 +19,9 @@
             </thead>
             <tbody>
             @foreach($categories as $category)
-                <tr class="category-row">
+                <tr>
                     <td>{{ $category->id }}</td>
-                    <td class="category-name"><a href="{{route('post-categories.edit',$category->id)}}">{{ $category->name }}</a></td>
+                    <td><a href="{{route('post-categories.edit',$category->id)}}">{{ $category->name }}</a></td>
                 </tr>
             @endforeach
             </tbody>

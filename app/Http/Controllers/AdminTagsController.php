@@ -4,40 +4,68 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Tag;
+use Illuminate\Support\Facades\Session;
 
 class AdminTagsController extends Controller
 {
-    public function index(Request $request){
+    public function index(){
 
-
-        if($request->search){
-            $tags = Tag::where('name','like','%'.$request->search.'%');
-        }
-        else{
-            $tags = Tag::all();
-        }
-
+        $tags = Tag::all();
         return view('admin.tags.index', compact('tags'));
     }
-    public function edit( Request $request ){
 
-        $id = $request->id;
-        $name = $request->name;
+    public function edit( $id ){
+
         $tag = Tag::findOrFail($id);
-        $tag->name = $name;
-        $tag->save();
-
-        return response()->json(array('tag'=> $tag), 200);
+        return view('/admin/tags/edit', compact('tag'));
     }
 
-    public function create( Request $request ){
+    public function update( $id,Request $request ){
 
-        $name = $request->name;
-        $tag = new Tag();
-        $tag->name = $name;
+        $request->validate([
+            'name' => 'required|unique:tags',
+        ]);
+
+        $tag = Tag::findOrFail($id);
+        $tag->name = $request->name;
         $tag->save();
 
-        return response()->json(array('tag'=> $tag), 200);
+        Session::flash('edited_tag','The tag has been edited');
+
+        return redirect('/admin/tags');
+    }
+
+    public function store( Request $request ){
+
+        $request->validate([
+            'name' => 'required|unique:tags',
+        ]);
+
+        $tag = new Tag();
+        $tag->name = $request->name;
+        $tag->save();
+
+        return redirect('/admin/tags');
+    }
+
+    public function destroy($id)
+    {
+        $tag = Tag::findOrfail($id);
+        if($tag->posts){
+            $tag->posts()->detach();
+        }
+        $tag->delete();
+
+
+        Session::flash('deleted_tag','The tag has been deleted');
+        return redirect ('/admin/tags');
+    }
+
+    public function search( Request $request ){
+
+        $tags = Tag::where('name', 'LIKE', '%'.$request->search.'%')->get();
+
+        return response()->json(array('tags'=> $tags), 200);
     }
 
 

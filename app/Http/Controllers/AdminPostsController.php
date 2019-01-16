@@ -6,6 +6,7 @@ use App\Http\Requests\AdminPostsRequest;
 use App\Photo;
 use App\Post;
 use App\PostsCategory;
+use App\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -30,7 +31,8 @@ class AdminPostsController extends Controller
     public function create()
     {
         $categories = PostsCategory::pluck('name','id')->all();
-        return view('admin.posts.create',compact('categories'));
+        $tags = Tag::orderBy('name','asc')->pluck('name','id')->all();
+        return view('admin.posts.create',compact('categories','tags'));
     }
 
     /**
@@ -56,7 +58,18 @@ class AdminPostsController extends Controller
 
         }
 
+
         $post->save();
+
+        if($request->input('tags')){
+            $tagsIds = $request->input('tags');
+            $integerIDs = array_map('intval', explode(',',$tagsIds[0]));
+
+            $post->tags()->attach($integerIDs);
+
+        }
+
+
 
         return redirect('/admin/posts');
     }
@@ -82,7 +95,9 @@ class AdminPostsController extends Controller
     {
         $post = Post::findOrFail($id);
         $categories = PostsCategory::pluck('name','id')->all();
-        return view('/admin/posts/edit', compact('post','categories'));
+        $tags = Tag::all()->except($post->tags()->pluck('id')->toArray());
+
+        return view('/admin/posts/edit', compact('post','categories','tags'));
     }
 
     /**
@@ -113,6 +128,13 @@ class AdminPostsController extends Controller
                 $photo = Photo::create(['file'=>$name]);
                 $post->photo_id = $photo->id;
             }
+        }
+        if($request->input('tags')){
+            $tagsIds = $request->input('tags');
+            $integerIDs = array_map('intval', explode(',',$tagsIds[0]));
+
+            $post->tags()->sync($integerIDs);
+
         }
         Session::flash('edited_post',$post->title. ' has been edited');
         $post->save();

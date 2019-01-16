@@ -26,7 +26,7 @@
             <a href="{{route('post-categories.index')}}" class="list-group-item">Categories</a>
             <a href="#" class="list-group-item">Tags</a>
         </div>
-        <a href="{{route('tags')}}" class="list-group-item list-group-item strong"> <i class="front-icon fa fa-home"></i> Tags </a>
+        <a href="{{route('tags.index')}}" class="list-group-item list-group-item strong"> <i class="front-icon fa fa-home"></i> Tags </a>
         <a href="#orders" class="list-group-item list-group-item strong" data-toggle="collapse" data-parent="#MainMenu"><i class="front-icon fa fa-box-open"></i> Orders <i class="back-icon fa fa-chevron-down float-right "></i></a>
         <div class="collapse list-group-submenu" id="orders">
             <a href="#" class="list-group-item">All Orders</a>

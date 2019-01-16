@@ -2,130 +2,106 @@
 
 @section('content')
     <h1>Tags</h1>
-
-    <div class="card">
-        <div class="card-body">
-            <h2>Add tag</h2>
-            <label for="name">Name:</label>
-            <input type="text" id="name" />
-            <button type="button"  class="add-tag btn btn-secondary btn-sm"><i class="fas fa-plus"></i> Add tag</button>
-        </div>
-    </div>
-
-    <div class="card mt-3 mb-3">
-        <div class="card-body">
-            <label for="search">Search for tag:</label>
-            <input type="text" id="search" />
-            <button type="button" class="search-tag btn btn-secondary btn-sm"><i class="fas fa-search"></i> Search</button>
-        </div>
-    </div>
-
-
+    @if( session('deleted_tag') )
+        @include('inc.flashmsg',['type'=>'success','msg'=>session('deleted_tag')])
+    @endif
+    @if( session('edited_tag') )
+        @include('inc.flashmsg',['type'=>'success','msg'=>session('edited_tag')])
+    @endif
+    <div class="row">
+    <div class="col-6">
     @if(count($tags)>0)
-        <table class="table table-striped table-hover table-sm">
+        <div class="card mb-3">
+            <div class="card-body">
+                <input type="text" placeholder="Type keyword" id="search"/>
+            </div>
+        </div>
+        <table class="table table-striped table-hover table-sm" id="tagsTable">
             <thead>
             <tr>
                 <th scope="col">Id</th>
                 <th scope="col">Name </th>
-                <th scope="col">Handle</th>
             </tr>
             </thead>
             <tbody>
             @foreach($tags as $tag)
-                <tr class="tag-row">
-                    <th>{{ $tag->id }}</th>
-                    <td class="tag-name"><span>{{ $tag->name }}</span><input type="text" value="{{ $tag->name }}" class="d-none" /></td>
-                    <td>
-                        <button type="button"  class="edit-tag btn btn-secondary btn-sm"><i class="fas fa-edit"></i> Edit</button>
-                        <button type="button"  class="save-tag btn btn-primary btn-sm d-none" data-id="{{ $tag->id }}"><i class="fas fa-save"></i> Save changes</button>
-                        <button type="button" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
-                    </td>
+                <tr>
+                    <td>{{ $tag->id }}</td>
+                    <td><a href="{{route('tags.edit',$tag->id)}}">{{ $tag->name }}</a></td>
                 </tr>
             @endforeach
             </tbody>
         </table>
-
-
-
-
-
+        <p id="noSearchResult" style="display: none;">No results for: <em>ddd</em></p>
     @else
         <p>No tags yet</p>
     @endif
+    </div>
+    <div class="col-6">
+        <div class="card">
+            <div class="card-body">
+                <h2>Add tag</h2>
+                {!! Form::open(['method' => 'POST','action' => 'AdminTagsController@store']) !!}
+                <div class="form-group">
+                    {!! Form::label('name', 'Name') !!}
+                    {!! Form::text('name', null,["class"=>"form-control"]) !!}
+                    {!! $errors->first('name','<p class="error-message">:message</p>') !!}
+                </div>
+                <button type="submit"  class="btn btn-secondary btn-sm"><i class="fas fa-plus"></i> Add tag</button>
+                {!! Form::close() !!}
 
+            </div>
+        </div>
+    </div>
+    </div>
 @endsection
+
 @section('scripts')
-    <script>
-        $(document).ready(function(){
+<script>
 
-            $(".search-tag").on('click', function(){
+    $(document).ready(function(){
 
-                var search = $(this).parent().find('#search').val();
+        $("#search").on('keyup ', function(){
 
-                if(search.length>1){
-                    $.ajax({
-                        method: "POST",
-                        url: "/admin/tags",
-                        dataType: 'json',
-                        data: { '_token':$('meta[name="csrf-token"]').attr('content'), 'search': search }
-                    })
-                    .done(function( $tag ) {
-                        location.reload();
-                    });
-                }
+            var search = $(this).val();
 
-            });
-
-            $(".add-tag").on('click', function(){
-                var name = $(this).parent().find('#name').val();
+            //if(search.length>1){
                 $.ajax({
                     method: "POST",
-                    url: "/admin/tags/create",
+                    url: "/admin/tags/search",
                     dataType: 'json',
-                    data: { '_token':$('meta[name="csrf-token"]').attr('content'), 'name': name }
-                })
-                .done(function( $tag ) {
-                    location.reload();
-                });
-            });
-
-            $(".edit-tag").on('click', function(){
-                var currentCatTd = $(this).parents('.tag-row').find('.tag-name');
-                currentCatTd.find('input').removeClass('d-none').show().focus();
-                currentCatTd.find('span').hide();
-
-                $(this).hide();
-                $(this).parent().find('.save-tag').removeClass('d-none').show();
-
-            });
-
-            $('.save-tag').on('click', function () {
-                var newCatName = $(this).parents('.tag-row').find('input').val();
-                var catId = $(this).data('id');
-                var saveBtn = $(this);
-                var editBtn = $(this).parent().find('.edit-tag');
-                var catTd = $(this).parents('.tag-row').find('.tag-name');
-
-                $.ajax({
-                    method: "POST",
-                    url: "/admin/tags/edit",
-                    dataType: 'json',
-                    data: { '_token':$('meta[name="csrf-token"]').attr('content'), 'name': newCatName, 'id': catId }
+                    data: { '_token':$('meta[name="csrf-token"]').attr('content'), 'search': search }
                 })
                 .done(function( res ) {
-                    saveBtn.hide();
-                    editBtn.show();
-                    catTd.find('input').hide();
-                    catTd.find('span').text(res.tag.name).show();
+
+                    if(res.tags.length>0){
+                        $("#noSearchResult").hide();
+                        var table = $("#tagsTable");
+                        table.show();
+                        var output = '';
+                        table.find('tbody').empty();
+
+                        $.each(res.tags, function( index, tag ) {
+
+                            output += '<tr>' +
+                                      '<td>'+tag.id+'</td>' +
+                                      '<td><a href="/admin/tags/'+tag.id+'/edit">'+tag.name+'</a></td>' +
+                                      '</tr>';
+                        });
+                        table.find('tbody').html(output);
+                    }
+                    else{
+
+                        $("#tagsTable").hide();
+                        $("#noSearchResult").find('em').text(search);
+                        $("#noSearchResult").show();
+                    }
                 });
-            });
-
-
-
+            //}
 
         });
 
-    </script>
+    });
+
+</script>
 @endsection
-
-

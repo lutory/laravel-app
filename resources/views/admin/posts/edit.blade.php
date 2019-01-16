@@ -5,16 +5,10 @@
 
     <h1>Edit post <em>{{$post->title}}</em></h1>
 
+    {!! Form::model($post,['method' => 'PATCH','action' => ['AdminPostsController@update',$post->id],'files'=> true]) !!}
+
     <div class="row">
-        <div class="col-2">
-            <img width="100%" src="{{ ($post->photo) ?  $post->photo->getPostImagePath($post->photo->file) : "/images/profile/default.jpg"}}" alt="">
-            <br /><br />
-            {!! Form::open(['method' => 'DELETE','action' => ['AdminPostsController@destroy',$post->id],'id'=>'deletePostForm']) !!}
-            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmDelete" data-form="deletePostForm" data-title="Delete Post" data-message="Are you sure you want to delete this post ?">Delete post</button>
-            {!! Form::close() !!}
-        </div>
-        <div class="col-10">
-            {!! Form::model($post,['method' => 'PATCH','action' => ['AdminPostsController@update',$post->id],'files'=> true]) !!}
+        <div class="col-8">
 
             <div class="form-group">
                 {!! Form::label('title', 'Title') !!}
@@ -44,15 +38,84 @@
                 {!! Form::select('status', ['1' => 'Active', '0' => 'Inactive'], null,['class'=>'form-control']); !!}
             </div>
 
-            <button type="submit" class="btn btn-primary">Edit post</button>
+            {{ Form::hidden('tags[]', null, array('id' => 'tagsIds')) }}
 
-            {!! Form::close() !!}
+            <button type="submit" class="btn btn-primary">Edit post</button>
+        </div>
+
+        <div class="col-4">
+            <img width="100%" src="{{ ($post->photo) ?  $post->photo->getPostImagePath($post->photo->file) : "/images/profile/default.jpg"}}" alt="">
+
+            <div class="card mt-2">
+
+                <div class="card-body">
+                    <h5 class="card-title">Tags for post:</h5>
+                    <div id="postTags">
+                        @foreach($post->tags as $tag)
+                            <a href="#"  data-name="{{$tag->name}}" data-id="{{$tag->id}}" class="tag-badge badge badge-success">{{$tag->name}} <i class="fas fa-times"></i></a>
+                        @endforeach
+                    </div>
+                    <hr>
+                    <h6>Search tag</h6>
+                    <input type="text" id="tagSearch" class="form-control" />
+                    <div id="searchTags" class="mt-3">
+                        @foreach($tags as $tag)
+                            <a href="#"  data-id="{{$tag->id}}" class="tag-badge badge badge-primary">{{$tag->name}} </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    {!! Form::close() !!}
+    {!! Form::open(['method' => 'DELETE','action' => ['AdminPostsController@destroy',$post->id],'id'=>'deletePostForm']) !!}
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmDelete" data-form="deletePostForm" data-title="Delete Post" data-message="Are you sure you want to delete this post ?">Delete post</button>
+    {!! Form::close() !!}
+
 @endsection
 @section('scripts')
     @include('inc.deletemodal')
+    <script>
+        $(document).ready( function(){
+
+            var selectedTagsIds = [];
+
+            if($("#postTags:not(:empty)")){
+                $("#postTags a").each(function(){
+                    selectedTagsIds.push( $(this).data('id') );
+                });
+            }
+
+            $("#tagSearch").on('keyup ', function() {
+                var search = $(this).val();
+                $('#searchTags a').hide();
+                $('#searchTags a').each(function () {
+                    if($(this).is(':contains("' + search + '")')){
+                        $(this).show();
+                    }
+                });
+            });
+
+            $("#searchTags").on('click','a',function (ev) {
+                ev.preventDefault();
+                var id = $(this).data('id');
+                var name = $(this).text();
+                selectedTagsIds.push(id);
+                $("#postTags").append('<a href="#" data-name="'+name+'" data-id="'+id+'"  class="badge badge-success">'+name+' <i class="fas fa-times"></i></a>');
+                $(this).remove();
+                $("#tagsIds").val(selectedTagsIds);
+            });
+            $("#postTags").on('click','a',function (ev) {
+                ev.preventDefault();
+                var deletedId = $(this).data('id');
+                var deletedName = $(this).data('name');
+                selectedTagsIds.splice( $.inArray(deletedId, selectedTagsIds), 1 );
+                $(this).remove();
+                $("#searchTags").append('<a href="#" data-id="'+deletedId+'" class="tag-badge badge badge-primary">'+deletedName+'</a>');
+                $("#tagsIds").val(selectedTagsIds);
+            });
+
+
+        } );
+    </script>
 @endsection
-
-
-
