@@ -18,7 +18,7 @@
 
             <div class="form-group">
                 {!! Form::label('body', 'Body') !!}
-                {!! Form::textarea('body', null,["class"=>"form-control"]) !!}
+                {!! Form::textarea('body', null,["class"=>"form-control tiny-mce"]) !!}
                 {!! $errors->first('body','<p class="error-message">:message</p>') !!}
             </div>
 
@@ -75,6 +75,7 @@
 @endsection
 @section('scripts')
     @include('inc.deletemodal')
+    @include('inc.admin.tinyMce')
     <script>
         $(document).ready( function(){
 
