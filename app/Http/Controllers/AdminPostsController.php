@@ -7,7 +7,9 @@ use App\Photo;
 use App\Post;
 use App\PostsCategory;
 use App\Tag;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class AdminPostsController extends Controller
@@ -17,10 +19,33 @@ class AdminPostsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::paginate(15);
-        return view('admin.posts.index', compact('posts'));
+        $search = $request->get('search');
+        $category = $request->get('category') != '' ? $request->get('category') : "";
+        $field = $request->get('field') != '' ? $request->get('field') : 'created_at';
+        $sort = $request->get('sort') != '' ? $request->get('sort') : 'desc';
+        $status = $request->get('status') != '' ? $request->get('status') : 'all';
+
+        $posts = new Post();
+        if($category){
+            $posts = $posts->with('category')->whereHas('category', function ($q) use ($category) {
+                $q->where('name', 'LIKE', "%$category%");
+            });
+        }
+        if($status != 'all'){
+            $posts = $posts->where('status', '=', $status );
+        }
+
+        $posts = $posts
+            ->where('title', 'like', '%' . $search . '%')
+            ->orderBy($field, $sort)
+            ->paginate(5)
+            ->withPath('?search=' . $search . '&category=' . $category .'&status=' . $status  . '&field=' . $field . '&sort=' . $sort);
+
+        $categories = PostsCategory::pluck('name','name')->all();
+        $users = User::pluck('name','id')->all();
+        return view('admin.posts.index', compact(['posts','users','categories']));
     }
 
     /**
