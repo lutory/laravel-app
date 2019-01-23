@@ -32,6 +32,6 @@ Route::group(['middleware'=>'admin'], function(){
     Route::post('/admin/post-categories/search','AdminPostsCategoriesController@search');
     Route::resource('/admin/tags','AdminTagsController');
     Route::post('/admin/tags/search','AdminTagsController@search');
-
+    Route::resource('/admin/pages','AdminPagesController');
 });
 

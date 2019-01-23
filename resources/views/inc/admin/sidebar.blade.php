@@ -42,6 +42,23 @@
                 </ul>
             </div>
         </li>
+        <li class="nav-item {{Request::is('*pages','*pages/*') ? 'active' : ''}}">
+            <a class="nav-link" data-toggle="collapse" href="#pages">
+                <i class="fas fa-newspaper menu-icon"></i>
+                <span class="menu-title">Pages</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse {{Request::is('*pages','*pages/*') ? 'show' : ''}}" id="pages">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a class="nav-link {{Request::is('*pages') ? 'active' : ''}}" href="{{route('pages.index')}}">List Pages</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{Request::is('*pages/create') ? 'active' : ''}}" href="{{route('pages.create')}}">Add new page</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
         <li class="nav-item {{Request::is('*tags','*tags/*') ? 'active' : ''}}">
             <a class="nav-link" href="{{route('tags.index')}}">
                 <i class="fas fa-tags menu-icon"></i>

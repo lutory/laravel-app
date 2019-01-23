@@ -10,6 +10,7 @@ class Photo extends Model
     protected $uploadFolder = '/images/';
     protected $uploadPostsFolder = '/images/posts/';
     protected $uploadUsersFolder = '/images/profile/';
+    protected $uploadPagesFolder = '/images/pages/';
     protected $defaultPhoto = 'default.jpg';
 
 //    public function getFileAttribute($photo){
@@ -27,6 +28,11 @@ class Photo extends Model
     public function getUserImagePath($photo){
         if($photo){
             return $this->uploadUsersFolder.$photo;
+        }
+    }
+    public function getPageImagePath($photo){
+        if($photo){
+            return $this->uploadPagesFolder.$photo;
         }
     }
 
