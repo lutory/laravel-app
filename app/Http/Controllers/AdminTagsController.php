@@ -10,7 +10,8 @@ class AdminTagsController extends Controller
 {
     public function index(){
 
-        $tags = Tag::all();
+        $tags = Tag::orderBy('name', 'asc')->get();
+
         return view('admin.tags.index', compact('tags'));
     }
 
@@ -63,7 +64,7 @@ class AdminTagsController extends Controller
 
     public function search( Request $request ){
 
-        $tags = Tag::where('name', 'LIKE', '%'.$request->search.'%')->get();
+        $tags = Tag::with('posts')->where('name', 'LIKE', '%'.$request->search.'%')->get();
 
         return response()->json(array('tags'=> $tags), 200);
     }

@@ -1,16 +1,30 @@
-<header class="row  justify-content-end">
-    <div class="col-2">
-
-        <div class="btn-group float-right">
-            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{Auth::user()->name}}
-            </button>
-            <div class="dropdown-menu dropdown-menu-right">
-                <a class="dropdown-item" href="#">Profile</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{{ route('logout')  }}">Logout</a>
-            </div>
-        </div>
-
+<nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+    <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
+        <a class="navbar-brand brand-logo" href="/admin">
+            <img src="/images/logo.svg" alt="logo" />
+        </a>
+        <a class="navbar-brand brand-logo-mini" href="/admin">
+            <img src="/images/logo-mini.svg" alt="logo" />
+        </a>
     </div>
-</header>
+    <div class="navbar-menu-wrapper d-flex align-items-center">
+
+        <ul class="navbar-nav navbar-nav-right">
+
+            <li class="nav-item dropdown d-none d-xl-inline-block">
+                <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+                    <span class="profile-text">Hello, {{Auth::user()->name}}</span>
+                    <img class="img-xs rounded-circle" src="{{ (Auth::user()->photo) ?  Auth::user()->photo->getUserImagePath(Auth::user()->photo->file) : "/images/profile/default.jpg"}}" alt="Profile image">
+                </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
+                    <a href="{{ route('logout')  }}" class="dropdown-item">
+                        Sign Out
+                    </a>
+                </div>
+            </li>
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+            <span class="mdi mdi-menu"></span>
+        </button>
+    </div>
+</nav>

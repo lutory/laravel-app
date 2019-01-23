@@ -4,25 +4,35 @@
     <meta charset="utf-8">
     <title>@yield('title')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="/css/app.css" />
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/vendor/vendor.bundle.base.css" />
+    <link rel="stylesheet" href="/css/vendor/vendor.bundle.addons.css" />
+    <link rel="stylesheet" href="/css/vendor/materialdesignicons.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 </head>
-<body class="h-100">
-<div class="container-fluid  h-100">
-    <div class="row main-container  h-100">
-        <div class="col-2 sidebar pl-0 pr-0  h-100">
-            @include('inc.admin.sidebar')
-        </div>
-        <div class="col-10 main-content">
-            @include('inc.admin.header')
-            @yield('content')
+<body>
+<div class="container-scroller">
+
+    @include('inc.admin.header')
+    <div class="container-fluid page-body-wrapper">
+        @include('inc.admin.sidebar')
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <div class="row">
+                    @yield('content')
+                </div>
+            </div>
+
+
         </div>
     </div>
 
-
 </div>
-<script src="/js/app.js"></script>
+{{--<script src="/js/app.js"></script>--}}
+<script src="/js/vendor/vendor.bundle.base.js"></script>
+<script src="/js/vendor/vendor.bundle.addons.js"></script>
+<script src="/js/vendor/off-canvas.js"></script>
+<script src="/js/vendor/misc.js"></script>
 @section('scripts')
 
 @show

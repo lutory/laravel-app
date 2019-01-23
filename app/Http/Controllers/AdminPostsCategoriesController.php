@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\PostsCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class AdminPostsCategoriesController extends Controller
 {
     public function index(){
 
-        $categories = PostsCategory::all();
+        $categories = PostsCategory::orderBy('name','asc')->get();
         return view('admin.post_categories.index', compact('categories'));
     }
 
@@ -29,6 +30,8 @@ class AdminPostsCategoriesController extends Controller
         $category->name = $request->name;
         $category->save();
 
+        Session::flash('edited_cat','The category has been edited');
+
         return redirect('/admin/post-categories');
     }
 
@@ -47,7 +50,7 @@ class AdminPostsCategoriesController extends Controller
 
     public function search( Request $request ){
 
-        $categories = PostsCategory::where('name', 'LIKE', '%'.$request->search.'%')->get();
+        $categories = PostsCategory::with('posts')->where('name', 'LIKE', '%'.$request->search.'%')->get();
 
         return response()->json(array('categories'=> $categories), 200);
     }

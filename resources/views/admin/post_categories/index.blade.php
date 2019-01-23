@@ -1,53 +1,64 @@
 @extends('layouts.admin')
 
 @section('content')
-    <h1>Posts Categories</h1>
-    <div class="row">
-    <div class="col-6">
-    @if(count($categories)>0)
-        <div class="card mb-3">
+
+    <div class="col-md-8 grid-margin stretch-card">
+
+        <div class="card">
             <div class="card-body">
-                <input type="text" placeholder="Type keyword" id="search"/>
+                <h1>Posts Categories</h1>
+                <hr>
+                @if( session('edited_cat') )
+                    @include('inc.flashmsg',['type'=>'success','msg'=>session('edited_cat')])
+                @endif
+                @if(count($categories)>0)
+                    <div class="form-group">
+                        <label for="search">Search</label>
+                        <input type="text" placeholder="Type keyword" id="search" class="form-control"/>
+                    </div>
+                    <table id="categoriesTable" class="table table-striped table-bordered table-sm">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Posts</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($categories as $category)
+                            <tr>
+                                <td>{{ $category->id }}</td>
+                                <td><a href="{{route('post-categories.edit',$category->id)}}">{{ $category->name }}</a></td>
+                                <td>{{ $category->posts->count() }}</td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                    <p id="noSearchResult" style="display: none;">No results for: <em></em></p>
+                @else
+                    <p>No categories yet</p>
+                @endif
             </div>
         </div>
-        <table class="table table-striped table-hover table-sm" id="categoriesTable">
-            <thead>
-            <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Name </th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach($categories as $category)
-                <tr>
-                    <td>{{ $category->id }}</td>
-                    <td><a href="{{route('post-categories.edit',$category->id)}}">{{ $category->name }}</a></td>
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
-        <p id="noSearchResult" style="display: none;">No results for: <em>ddd</em></p>
-    @else
-        <p>No categories yet</p>
-    @endif
     </div>
-    <div class="col-6">
+
+    <div class="col-md-4 grid-margin stretch-card">
         <div class="card">
+
             <div class="card-body">
                 <h2>Add category</h2>
                 {!! Form::open(['method' => 'POST','action' => 'AdminPostsCategoriesController@store']) !!}
                 <div class="form-group">
                     {!! Form::label('name', 'Name') !!}
                     {!! Form::text('name', null,["class"=>"form-control"]) !!}
-                    {!! $errors->first('name','<p class="error-message">:message</p>') !!}
+                    {!! $errors->first('name','<p class="text-danger">:message</p>') !!}
                 </div>
-                <button type="submit"  class="add-category btn btn-secondary btn-sm"><i class="fas fa-plus"></i> Add category</button>
+                <button type="submit"  class="add-category btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add category</button>
                 {!! Form::close() !!}
-
             </div>
         </div>
     </div>
-    </div>
+
 @endsection
 
 @section('scripts')
@@ -80,6 +91,7 @@
                             output += '<tr>' +
                                       '<td>'+cat.id+'</td>' +
                                       '<td><a href="/admin/post-categories/'+cat.id+'/edit">'+cat.name+'</a></td>' +
+                                      '<td>'+cat.posts.length+'</td>' +
                                       '</tr>';
                         });
                         table.find('tbody').html(output);
