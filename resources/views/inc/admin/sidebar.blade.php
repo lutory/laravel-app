@@ -16,51 +16,51 @@
                 </div>
             </div>
         </li>
-        <li class="nav-item">
+        <li class="nav-item {{Request::is('admin') ? 'active' : ''}}">
             <a class="nav-link" href="/admin">
                 <i class="menu-icon mdi mdi-television"></i>
                 <span class="menu-title">Dashboard</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#posts" aria-expanded="false" aria-controls="ui-basic">
+        <li class="nav-item {{Request::is('*posts','*posts/*','*post-categories','*post-categories/*') ? 'active' : ''}}">
+            <a class="nav-link" data-toggle="collapse" href="#posts">
                 <i class="menu-icon mdi mdi-content-copy"></i>
                 <span class="menu-title">Posts</span>
                 <i class="menu-arrow"></i>
             </a>
-            <div class="collapse" id="posts">
+            <div class="collapse {{Request::is('*posts','*posts/*','*post-categories','*post-categories/*') ? 'show' : ''}}" id="posts">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{route('posts.index')}}">List Posts</a>
+                        <a class="nav-link {{Request::is('*posts') ? 'active' : ''}}" href="{{route('posts.index')}}">List Posts</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{route('posts.create')}}">Add new post</a>
+                        <a class="nav-link {{Request::is('*posts/create') ? 'active' : ''}}" href="{{route('posts.create')}}">Add new post</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{route('post-categories.index')}}">Categories</a>
+                        <a class="nav-link {{Request::is('*post-categories') ? 'active' : ''}}" href="{{route('post-categories.index')}}">Categories</a>
                     </li>
                 </ul>
             </div>
         </li>
-        <li class="nav-item">
+        <li class="nav-item {{Request::is('*tags','*tags/*') ? 'active' : ''}}">
             <a class="nav-link" href="{{route('tags.index')}}">
                 <i class="menu-icon mdi mdi-television"></i>
                 <span class="menu-title">Tags</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#users" aria-expanded="false" aria-controls="ui-basic">
+        <li class="nav-item {{Request::is('*users','*users/*') ? 'active' : ''}}">
+            <a class="nav-link" data-toggle="collapse" href="#users">
                 <i class="menu-icon mdi mdi-content-copy"></i>
                 <span class="menu-title">Users</span>
                 <i class="menu-arrow"></i>
             </a>
-            <div class="collapse" id="users">
+            <div class="collapse {{Request::is('*users','*users/*') ? 'show' : ''}}"  id="users">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{route('users.index')}}">List Users</a>
+                        <a class="nav-link {{Request::is('*users') ? 'active' : ''}}" href="{{route('users.index')}}">List Users</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{route('users.create')}}">Add new user</a>
+                        <a class="nav-link {{Request::is('*users/create') ? 'active' : ''}}" href="{{route('users.create')}}">Add new user</a>
                     </li>
                 </ul>
             </div>
