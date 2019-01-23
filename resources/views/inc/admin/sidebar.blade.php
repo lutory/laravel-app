@@ -18,13 +18,13 @@
         </li>
         <li class="nav-item {{Request::is('admin') ? 'active' : ''}}">
             <a class="nav-link" href="/admin">
-                <i class="menu-icon mdi mdi-television"></i>
+                <i class="fas fa-tachometer-alt menu-icon"></i>
                 <span class="menu-title">Dashboard</span>
             </a>
         </li>
         <li class="nav-item {{Request::is('*posts','*posts/*','*post-categories','*post-categories/*') ? 'active' : ''}}">
             <a class="nav-link" data-toggle="collapse" href="#posts">
-                <i class="menu-icon mdi mdi-content-copy"></i>
+                <i class="fas fa-book menu-icon"></i>
                 <span class="menu-title">Posts</span>
                 <i class="menu-arrow"></i>
             </a>
@@ -44,13 +44,13 @@
         </li>
         <li class="nav-item {{Request::is('*tags','*tags/*') ? 'active' : ''}}">
             <a class="nav-link" href="{{route('tags.index')}}">
-                <i class="menu-icon mdi mdi-television"></i>
+                <i class="fas fa-tags menu-icon"></i>
                 <span class="menu-title">Tags</span>
             </a>
         </li>
         <li class="nav-item {{Request::is('*users','*users/*') ? 'active' : ''}}">
             <a class="nav-link" data-toggle="collapse" href="#users">
-                <i class="menu-icon mdi mdi-content-copy"></i>
+                <i class="fas fa-users menu-icon"></i>
                 <span class="menu-title">Users</span>
                 <i class="menu-arrow"></i>
             </a>
