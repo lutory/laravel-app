@@ -39,3 +39,4 @@ Route::group(['middleware'=>'admin'], function(){
     })->middleware('auth');
 });
 
+Route::get('/', 'FrontPagesController@home');
