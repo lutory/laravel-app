@@ -16302,3 +16302,27 @@ ul {
     border-left: 3px solid rgba(255, 255, 255, 0.2); } }
 
 /*# sourceMappingURL=maps/style.css.map */
+
+
+
+.images-preview{
+  margin-bottom: 20px;
+}
+.images-preview span{
+  margin-right: 7px;
+  margin-bottom: 7px;
+  border: 1px solid #f1f1f1;
+  padding: 3px;
+  display: inline-block;
+
+}
+.images-preview span img{
+  width: 50px;
+
+}
+.images-preview span i{
+  color: #0c85d0;
+  padding: 0 5px;
+  cursor: pointer;
+
+}

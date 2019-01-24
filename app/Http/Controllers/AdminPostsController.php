@@ -8,6 +8,7 @@ use App\Post;
 use App\PostsCategory;
 use App\Tag;
 use App\User;
+use App\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -68,6 +69,8 @@ class AdminPostsController extends Controller
      */
     public function store(AdminPostsRequest $request)
     {
+        //dd($request->all());exit;
+
         $post = new Post();
         $post->title = $request->input('title');
         $post->body = $request->input('body');
@@ -91,6 +94,16 @@ class AdminPostsController extends Controller
             $integerIDs = array_map('intval', explode(',',$tagsIds[0]));
 
             $post->tags()->attach($integerIDs);
+
+        }
+
+        if($request->input('gallery')){
+            $imagesPaths = explode(',',$request->input('gallery')[0]);
+
+            foreach ($imagesPaths as $path){
+                $image = new Image(['path'=>$path]);
+                $post->images()->save($image);
+            }
 
         }
 
@@ -134,6 +147,7 @@ class AdminPostsController extends Controller
      */
     public function update(AdminPostsRequest $request, $id)
     {
+        //dd($request->all());exit;
         $post = Post::findOrFail($id);
         $post->title = $request->input('title');
         $post->body = $request->input('body');
@@ -159,6 +173,18 @@ class AdminPostsController extends Controller
             $integerIDs = array_map('intval', explode(',',$tagsIds[0]));
 
             $post->tags()->sync($integerIDs);
+
+        }
+        if($request->input('gallery')){
+
+            $post->images()->delete();
+
+            $imagesPaths = explode(',',$request->input('gallery')[0]);
+
+            foreach ($imagesPaths as $path){
+                $image = new Image(['path'=>$path]);
+                $post->images()->save($image);
+            }
 
         }
         Session::flash('edited_post',$post->title. ' has been edited');

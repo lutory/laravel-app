@@ -39,6 +39,7 @@
                 </div>
 
                 {{ Form::hidden('tags[]', null, array('id' => 'tagsIds')) }}
+                {{ Form::hidden('gallery[]', null, array('id' => 'imagesPaths')) }}
 
                 <button type="submit" class="btn btn-primary"><i class="fas fa-edit"></i> Edit post</button>
 
@@ -61,7 +62,13 @@
                 <img width="100%"
                      src="{{ ($post->photo) ?  $post->photo->getPostImagePath($post->photo->file) : "/images/profile/default.jpg"}}"
                      alt="">
-                <hr>
+
+            </div>
+        </div>
+        <div class="card mt-3">
+
+            <div class="card-body">
+
                 <h5 class="card-title">Tags for post:</h5>
                 <div id="postTags">
                     @foreach($post->tags as $tag)
@@ -79,6 +86,38 @@
                 </div>
             </div>
         </div>
+        <div class="card mt-3">
+
+            <div class="card-body">
+                <h5 class="card-title">Gallery</h5>
+                <hr>
+
+                <div class="image-upload-holder">
+
+                    @if($post->images)
+                        <div class="images-preview" id="galleryHolder">
+                        @foreach($post->images as $image)
+                            <span>
+                                <img src="{{asset($image->path)}}" data-src="{{$image->path}}" alt="">
+                                <i class="fas fa-trash-alt remove-image"></i>
+                            </span>
+                        @endforeach
+                        </div>
+                    @endif
+
+                    <div class="input-group d-inline">
+                       <span class="input-group-btn">
+                         <a id="addImageToGallery" class="btn btn-primary" style="color: #fff;padding: 9px 7px; width: 100%;">
+                           <i class="fas fa-image"></i> Add image
+                         </a>
+                       </span>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
     </div>
 
 @endsection
@@ -88,13 +127,45 @@
     <script>
         $(document).ready(function () {
 
-            var selectedTagsIds = [];
 
-            if ($("#postTags:not(:empty)")) {
-                $("#postTags a").each(function () {
-                    selectedTagsIds.push($(this).data('id'));
-                });
+            // Add gallery images to post
+
+            var selectedGalleryPaths = [];
+            $("#galleryHolder span img").each(function(){
+                selectedGalleryPaths.push($(this).data('src'));
+            });
+            $('#imagesPaths').val(selectedGalleryPaths);
+
+            $("#addImageToGallery").on('click',fileManagerGallery);
+
+            function fileManagerGallery(){
+                var route_prefix = '/laravel-filemanager';
+                window.open(route_prefix + '?type=image', 'FileManager', 'width=900,height=600');
+                window.SetUrl = function (file_path) {
+                    var rawSrc = file_path.replace(document.location.origin+'/','');
+                    $('#galleryHolder').append('<span><img data-src="'+rawSrc+'" src="'+file_path+'" alt=""><i class="fas fa-trash-alt remove-image"></i></span>');
+                    selectedGalleryPaths.push(rawSrc);
+                    $('#imagesPaths').val(selectedGalleryPaths);
+                };
+                return false;
+
             }
+
+            $('#galleryHolder').on('click','.remove-image',function () {
+
+                var removePath=$(this).prev().data('src');
+                selectedGalleryPaths.splice($.inArray(removePath, selectedGalleryPaths), 1);
+                $('#imagesPaths').val(selectedGalleryPaths);
+                $(this).parent().remove();
+            });
+
+            // Add tags to post
+
+            var selectedTagsIds = [];
+            $("#postTags a").each(function(){
+                selectedTagsIds.push($(this).data('id'));
+            });
+            $("#tagsIds").val(selectedTagsIds);
 
             $("#tagSearch").on('keyup ', function () {
                 var search = $(this).val();

@@ -26,5 +26,8 @@ class Post extends Model
     public function tags(){
         return $this->morphToMany('App\Tag', 'taggable');
     }
+    public function images(){
+        return $this->morphMany('App\Image', 'imageable');
+    }
 
 }

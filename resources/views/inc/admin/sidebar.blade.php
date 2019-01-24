@@ -59,6 +59,12 @@
                 </ul>
             </div>
         </li>
+        <li class="nav-item {{Request::is('*media') ? 'active' : ''}}">
+            <a class="nav-link" href="/admin/media">
+                <i class="fas fa-images menu-icon"></i>
+                <span class="menu-title">Media</span>
+            </a>
+        </li>
         <li class="nav-item {{Request::is('*tags','*tags/*') ? 'active' : ''}}">
             <a class="nav-link" href="{{route('tags.index')}}">
                 <i class="fas fa-tags menu-icon"></i>
