@@ -33,6 +33,7 @@ Route::group(['middleware'=>'admin'], function(){
     Route::resource('/admin/tags','AdminTagsController');
     Route::post('/admin/tags/search','AdminTagsController@search');
     Route::resource('/admin/pages','AdminPagesController');
+    Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout');
     Route::get('/admin/media',function(){
         return view('admin.media');
     })->middleware('auth');

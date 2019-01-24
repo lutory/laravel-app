@@ -17,7 +17,7 @@
                     <img class="img-xs rounded-circle" src="{{ (Auth::user()->photo) ?  Auth::user()->photo->getUserImagePath(Auth::user()->photo->file) : "/images/profile/default.jpg"}}" alt="Profile image">
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
-                    <a href="{{ route('logout')  }}" class="dropdown-item">
+                    <a href="{{ url('/logout') }}" class="dropdown-item">
                         Sign Out
                     </a>
                 </div>
