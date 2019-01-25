@@ -12,4 +12,8 @@ class Tag extends Model
     {
         return $this->morphedByMany('App\Post', 'taggable');
     }
+    public function products()
+    {
+        return $this->morphedByMany('App\Product', 'taggable');
+    }
 }

@@ -5,6 +5,7 @@
         <div class="card">
             <div class="card-body">
                 <h1>Dashboard</h1>
+                <p>To do</p>
             </div>
         </div>
     </div>

@@ -9,15 +9,9 @@ class Comment extends Model
 
     public function commentable(){
        return $this->morphTo();
-        //return Comment::info();
     }
 
     public function user(){
         return $this->belongsTo( 'App\User' );
-    }
-
-    public static function scopeInfo($query)
-    {
-        return $query->with('user')->get();
     }
 }

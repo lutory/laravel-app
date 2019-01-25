@@ -22,6 +22,23 @@
                 <span class="menu-title">Dashboard</span>
             </a>
         </li>
+        <li class="nav-item {{Request::is('*products','*products/*') ? 'active' : ''}}">
+            <a class="nav-link" data-toggle="collapse" href="#products">
+                <i class="fas fa-dice menu-icon"></i>
+                <span class="menu-title">Products</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse {{Request::is('*products','*products/*') ? 'show' : ''}}" id="products">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a class="nav-link {{Request::is('*products') ? 'active' : ''}}" href="{{route('products.index')}}">List Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{Request::is('*products/create') ? 'active' : ''}}" href="{{route('products.create')}}">Add new Product</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
         <li class="nav-item {{Request::is('*posts','*posts/*','*post-categories','*post-categories/*') ? 'active' : ''}}">
             <a class="nav-link" data-toggle="collapse" href="#posts">
                 <i class="fas fa-book menu-icon"></i>

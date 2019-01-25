@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Auth::routes();
@@ -39,6 +39,7 @@ Route::group(['middleware'=>'admin'], function(){
     })->middleware('auth');
     Route::post('/admin/comments/change-status','AdminCommentsController@changeStatus');
     Route::post('/admin/comment/delete','AdminCommentsController@destroy');
+    Route::resource('/admin/products','AdminProductsController');
 });
 
-Route::get('/', 'FrontPagesController@home');
+//Route::get('/', 'FrontPagesController@home');
