@@ -134,8 +134,11 @@ class AdminPostsController extends Controller
         $post = Post::findOrFail($id);
         $categories = PostsCategory::pluck('name','id')->all();
         $tags = Tag::all()->except($post->tags()->pluck('id')->toArray());
+        $comments = $post->comments()->paginate(5);
 
-        return view('/admin/posts/edit', compact('post','categories','tags'));
+        //dd($comments);exit;
+
+        return view('/admin/posts/edit', compact('post','categories','tags','comments'));
     }
 
     /**

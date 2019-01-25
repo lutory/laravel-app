@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <div class="col-md-8 grid-margin stretch-card">
+    <div class="col-md-8 grid-margin">
         <div class="card">
 
             <div class="card-body">
@@ -47,9 +47,52 @@
                 {!! Form::open(['method' => 'DELETE','action' => ['AdminPostsController@destroy',$post->id],'id'=>'deletePostForm', 'class'=>'d-inline float-right']) !!}
                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmDelete"
                         data-form="deletePostForm" data-title="Delete Post"
-                        data-message="Are you sure you want to delete this post ?"><i class="fas fa-trash"></i> Delete post
+                        data-message="Are you sure you want to delete this post ?"><i class="fas fa-trash"></i> Delete
+                    post
                 </button>
                 {!! Form::close() !!}
+            </div>
+        </div>
+
+
+        <div class="card mt-3">
+
+            <div class="card-body">
+                <h2>Comments</h2>
+                @if( count($post->comments) > 0 )
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-sm mb-3">
+                            <thead>
+                            <tr>
+                                <th>Body</th>
+                                <th>User</th>
+                                <th>Created at</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($comments as $comment)
+                                <tr>
+                                    <td width="60%" style="white-space: normal">{{ $comment->body  }}</td>
+                                    <td>{{ $comment->user->name  }}</td>
+                                    <td>{{ $comment->created_at->toDateTimeString()  }}</td>
+                                    <td align="center">@if($comment->status == '1') <span
+                                                class="badge badge-success">Active</span> @else <span
+                                                class="badge badge-danger">Inactive</span> @endif
+                                        <a href="#" data-id="{{ $comment->id  }}" data-status="{{ $comment->status  }}" class="changeStatus d-block mt-1">Change status</a>
+                                    </td>
+                                    <td><button data-id="{{ $comment->id  }}" type="button" class="deleteComment btn btn-icons btn-outline-danger"><i class="fas fa-trash"></i></button></td>
+                                </tr>
+                            @endforeach
+
+                            </tbody>
+                        </table>
+                        {{ $comments->links() }}
+                    </div>
+                @else
+                    <p>No comments for this post.</p>
+                @endif
             </div>
         </div>
     </div>
@@ -96,18 +139,19 @@
 
                     @if($post->images)
                         <div class="images-preview" id="galleryHolder">
-                        @foreach($post->images as $image)
-                            <span>
+                            @foreach($post->images as $image)
+                                <span>
                                 <img src="{{asset($image->path)}}" data-src="{{$image->path}}" alt="">
                                 <i class="fas fa-trash-alt remove-image"></i>
                             </span>
-                        @endforeach
+                            @endforeach
                         </div>
                     @endif
 
                     <div class="input-group d-inline">
                        <span class="input-group-btn">
-                         <a id="addImageToGallery" class="btn btn-primary" style="color: #fff;padding: 9px 7px; width: 100%;">
+                         <a id="addImageToGallery" class="btn btn-primary"
+                            style="color: #fff;padding: 9px 7px; width: 100%;">
                            <i class="fas fa-image"></i> Add image
                          </a>
                        </span>
@@ -127,23 +171,68 @@
     <script>
         $(document).ready(function () {
 
+            // Change comment status
+
+            $(".changeStatus").on('click ', function (ev) {
+
+                ev.preventDefault();
+                var thisChangeA = $(this);
+
+                $.ajax({
+                    method: "POST",
+                    url: "/admin/comments/change-status",
+                    dataType: 'json',
+                    data: {'_token': $('meta[name="csrf-token"]').attr('content'), 'id': thisChangeA.data('id'),'status': thisChangeA.data('status')}
+                })
+                    .done(function (res) {
+                        var newStatus = res.comment.status;
+
+                        var statusHtml = '<span class="badge badge-danger">Inactive</span>';
+                        if(newStatus==1){
+                            statusHtml = '<span class="badge badge-success">Active</span>';
+                        }
+                        thisChangeA.prev('span').remove();
+                        thisChangeA.before(statusHtml);
+                        thisChangeA.data('status',newStatus);
+                    });
+                //}
+
+            });
+
+            // Delete comment
+
+            $(".deleteComment").on('click ', function (ev) {
+                var thisDel = $(this);
+                $.ajax({
+                    method: "POST",
+                    url: "/admin/comment/delete",
+                    dataType: 'json',
+                    data: {'_token': $('meta[name="csrf-token"]').attr('content'), 'id': $(this).data('id')}
+                })
+                    .done(function (res) {
+                        thisDel.parents('tr').remove();
+                    });
+                //}
+
+            });
+
 
             // Add gallery images to post
 
             var selectedGalleryPaths = [];
-            $("#galleryHolder span img").each(function(){
+            $("#galleryHolder span img").each(function () {
                 selectedGalleryPaths.push($(this).data('src'));
             });
             $('#imagesPaths').val(selectedGalleryPaths);
 
-            $("#addImageToGallery").on('click',fileManagerGallery);
+            $("#addImageToGallery").on('click', fileManagerGallery);
 
-            function fileManagerGallery(){
+            function fileManagerGallery() {
                 var route_prefix = '/laravel-filemanager';
                 window.open(route_prefix + '?type=image', 'FileManager', 'width=900,height=600');
                 window.SetUrl = function (file_path) {
-                    var rawSrc = file_path.replace(document.location.origin+'/','');
-                    $('#galleryHolder').append('<span><img data-src="'+rawSrc+'" src="'+file_path+'" alt=""><i class="fas fa-trash-alt remove-image"></i></span>');
+                    var rawSrc = file_path.replace(document.location.origin + '/', '');
+                    $('#galleryHolder').append('<span><img data-src="' + rawSrc + '" src="' + file_path + '" alt=""><i class="fas fa-trash-alt remove-image"></i></span>');
                     selectedGalleryPaths.push(rawSrc);
                     $('#imagesPaths').val(selectedGalleryPaths);
                 };
@@ -151,9 +240,9 @@
 
             }
 
-            $('#galleryHolder').on('click','.remove-image',function () {
+            $('#galleryHolder').on('click', '.remove-image', function () {
 
-                var removePath=$(this).prev().data('src');
+                var removePath = $(this).prev().data('src');
                 selectedGalleryPaths.splice($.inArray(removePath, selectedGalleryPaths), 1);
                 $('#imagesPaths').val(selectedGalleryPaths);
                 $(this).parent().remove();
@@ -162,7 +251,7 @@
             // Add tags to post
 
             var selectedTagsIds = [];
-            $("#postTags a").each(function(){
+            $("#postTags a").each(function () {
                 selectedTagsIds.push($(this).data('id'));
             });
             $("#tagsIds").val(selectedTagsIds);

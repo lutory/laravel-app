@@ -37,6 +37,8 @@ Route::group(['middleware'=>'admin'], function(){
     Route::get('/admin/media',function(){
         return view('admin.media');
     })->middleware('auth');
+    Route::post('/admin/comments/change-status','AdminCommentsController@changeStatus');
+    Route::post('/admin/comment/delete','AdminCommentsController@destroy');
 });
 
 Route::get('/', 'FrontPagesController@home');
