@@ -39,7 +39,13 @@ Route::group(['middleware'=>'admin'], function(){
     })->middleware('auth');
     Route::post('/admin/comments/change-status','AdminCommentsController@changeStatus');
     Route::post('/admin/comment/delete','AdminCommentsController@destroy');
+    Route::get('/admin/products/categories','AdminCategoriesController@index')->name('products.categories');
+    Route::get('/admin/products/categories/{category}/edit','AdminCategoriesController@edit')->name('products.categories.edit');
+    Route::patch('/admin/products/categories/{category}','AdminCategoriesController@update')->name('products.categories.update');
+    Route::post('/admin/products/categories','AdminCategoriesController@store');
+    Route::post('/admin/categories/reorder','AdminCategoriesController@reorder');
     Route::resource('/admin/products','AdminProductsController');
+
 });
 
 //Route::get('/', 'FrontPagesController@home');

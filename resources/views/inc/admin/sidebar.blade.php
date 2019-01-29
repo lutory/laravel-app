@@ -28,13 +28,16 @@
                 <span class="menu-title">Products</span>
                 <i class="menu-arrow"></i>
             </a>
-            <div class="collapse {{Request::is('*products','*products/*') ? 'show' : ''}}" id="products">
+            <div class="collapse {{Request::is('*products','*products/*','*products/categories/*') ? 'show' : ''}}" id="products">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item">
                         <a class="nav-link {{Request::is('*products') ? 'active' : ''}}" href="{{route('products.index')}}">List Products</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{Request::is('*products/create') ? 'active' : ''}}" href="{{route('products.create')}}">Add new Product</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{Request::is('*products/categories') ? 'active' : ''}}" href="{{route('products.categories')}}">Categories</a>
                     </li>
                 </ul>
             </div>

@@ -50,6 +50,11 @@ class AdminProductsController extends Controller
         return view('admin.products.create',compact('tags'));
     }
 
+    public function show()
+    {
+
+    }
+
     public function store(AdminProductsRequest $request)
     {
         //dd($request->all());exit;
