@@ -59,6 +59,9 @@
                     <li class="nav-item">
                         <a class="nav-link {{Request::is('*post-categories') ? 'active' : ''}}" href="{{route('post-categories.index')}}">Categories</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{Request::is('*posts/categories') ? 'active' : ''}}" href="{{route('posts.categories')}}">Categories</a>
+                    </li>
                 </ul>
             </div>
         </li>

@@ -14,24 +14,21 @@ class AdminCategoriesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public $categoryType = 'products';
+    public $categoryType = '';
 
     public function __construct()
     {
         $route = \Request::route()->getName();
-
         $this->categoryType = explode('.',$route)[0];
     }
 
     public function index()
     {
-
         $categoriesArr = Category::with('photo')->whereType($this->categoryType)->orderBy('order', 'asc')->get()->toArray();
-
-        $categories = $this->_buildTree($categoriesArr);//var_dump($categories);exit;
+        $categories = $this->_buildTree($categoriesArr);
         $mainCategories = $this->_mainCategories($categoriesArr);
-
-        return view('admin.categories.index', compact(['categories','mainCategories']));
+        $type = $this->categoryType;
+        return view('admin.categories.index', compact(['categories','mainCategories','type']));
     }
 
     /**
@@ -55,6 +52,7 @@ class AdminCategoriesController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate([
             'name' => 'required|unique:categories',
         ]);
@@ -64,7 +62,7 @@ class AdminCategoriesController extends Controller
         $category->body = $request->body ? $request->body : '';
         $category->parent_id = $request->parent_id ? $request->parent_id : 0;
         $category->status = $request->status;
-        $category->type = $request->type;
+        $category->type = $this->categoryType;
 
         if( $file = $request->file('photo_id') ){
             $name = time().$file->getClientOriginalName();
@@ -75,7 +73,7 @@ class AdminCategoriesController extends Controller
 
         $category->save();
 
-        return redirect('/admin/products/categories');
+        return redirect('/admin/'.$this->categoryType.'/categories');
     }
 
     /**
@@ -98,7 +96,8 @@ class AdminCategoriesController extends Controller
     public function edit($id)
     {
         $category = Category::findOrFail($id);
-        $mainCategories = Category::whereParentId(0)->whereType('products')->pluck("name", "id")->toArray();
+
+        $mainCategories = Category::whereParentId(0)->whereType($this->categoryType)->where('id','!=',$id)->pluck("name", "id")->toArray();
         $children = Category::whereParentId($id)->count();
         return view('/admin/categories/edit', compact('category','mainCategories','children'));
     }
@@ -145,7 +144,7 @@ class AdminCategoriesController extends Controller
 
         Session::flash('edited_cat','The category has been edited');
 
-        return redirect('/admin/products/categories');
+        return redirect('/admin/'.$this->categoryType.'/categories');
     }
 
     /**

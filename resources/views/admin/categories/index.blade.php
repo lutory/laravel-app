@@ -4,11 +4,12 @@
     <link rel="stylesheet" href="/css/vendor/jquery-ui.min.css" />
 @endsection
 @section('content')
+
     <div class="col-md-8 grid-margin stretch-card">
 
         <div class="card">
             <div class="card-body">
-                <h1>Products Categories</h1>
+                <h1>{{ucfirst($type)}} Categories</h1>
                 <hr>
 
                 @if(count($categories)>0)
@@ -22,7 +23,7 @@
                                         <a href="javascript:void(0)" class="btn btn-sm btn-dark open-cat"><i class="fas fa-plus"></i></a>
                                     @endif
                                     {{--@if($category['photo'])<img src="/images/categories/{{ $category['photo']['file'] }}"/> @endif--}}
-                                    <a href="{{route('products.categories.edit',$category['id'])}}">{{$category['name']}}</a>
+                                    <a href="{{route($type.'.categories.edit',$category['id'])}}">{{$category['name']}}</a>
                                     @if($category['status'] == '1') <span class="badge badge-success">Active</span> @else <span class="badge badge-danger">Inactive</span>@endif
                                 </p>
                                 <div class="handles float-right">
@@ -34,7 +35,7 @@
                                     @foreach($category['childs'] as $child)
                                         <li class="clearfix" data-name="{{$child['name']}}"  data-id="{{$child['id']}}">
                                             <p class="float-left mb-0">
-                                                <a href="{{route('products.categories.edit',$child['id'])}}">{{$child['name']}}</a>
+                                                <a href="{{route($type.'.categories.edit',$child['id'])}}">{{$child['name']}}</a>
                                                 @if($child['status'] == '1') <span class="badge badge-success">Active</span> @else <span class="badge badge-danger">Inactive</span>@endif
                                             </p>
                                             <div class="handles float-right">
@@ -86,7 +87,6 @@
                     {!! Form::file('photo_id',['class'=>'custom-file-input']); !!}
                     {!! Form::label('photo_id', 'Category Image',['class'=>'custom-file-label']) !!}
                 </div>
-                {{ Form::hidden('type', 'products') }}
                 <button type="submit"  class="add-category btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add category</button>
                 {!! Form::close() !!}
             </div>

@@ -27,7 +27,7 @@ Route::get('/admin', function(){
 
 Route::group(['middleware'=>'admin'], function(){
     Route::resource('/admin/users','AdminUsersController');
-    Route::resource('/admin/posts','AdminPostsController');
+
     Route::resource('/admin/post-categories','AdminPostsCategoriesController');
     Route::post('/admin/post-categories/search','AdminPostsCategoriesController@search');
     Route::resource('/admin/tags','AdminTagsController');
@@ -39,13 +39,20 @@ Route::group(['middleware'=>'admin'], function(){
     })->middleware('auth');
     Route::post('/admin/comments/change-status','AdminCommentsController@changeStatus');
     Route::post('/admin/comment/delete','AdminCommentsController@destroy');
+
     Route::get('/admin/products/categories','AdminCategoriesController@index')->name('products.categories');
     Route::get('/admin/products/categories/{category}/edit','AdminCategoriesController@edit')->name('products.categories.edit');
     Route::patch('/admin/products/categories/{category}','AdminCategoriesController@update')->name('products.categories.update');
-    Route::post('/admin/products/categories','AdminCategoriesController@store');
+    Route::post('/admin/products/categories','AdminCategoriesController@store')->name('products.categories.store');
     Route::post('/admin/categories/reorder','AdminCategoriesController@reorder');
-    Route::resource('/admin/products','AdminProductsController');
 
+    Route::get('/admin/posts/categories','AdminCategoriesController@index')->name('posts.categories');
+    Route::get('/admin/posts/categories/{category}/edit','AdminCategoriesController@edit')->name('posts.categories.edit');
+    Route::patch('/admin/posts/categories/{category}','AdminCategoriesController@update')->name('posts.categories.update');
+    Route::post('/admin/posts/categories','AdminCategoriesController@store')->name('posts.categories.store');
+
+    Route::resource('/admin/products','AdminProductsController');
+    Route::resource('/admin/posts','AdminPostsController');
 });
 
 //Route::get('/', 'FrontPagesController@home');

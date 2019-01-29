@@ -18,7 +18,8 @@
                 {!! Form::open(['method'=>'GET','class="form-inline"']) !!}
                 <div class="row">
                     <div class="form-group m-3">
-                        {!! Form::select('category',array_merge(['0' => 'Select Category'], $categories),request('category'),['class'=>'form-control','onChange'=>'form.submit()']) !!}
+                        @php  $noCatArrayOption=[]; $noCatArrayOption['0'] = 'Select Category';$cats = $noCatArrayOption + $categories;  @endphp
+                        {!! Form::select('category',$cats,request('category'),['class'=>'form-control','onChange'=>'form.submit()']) !!}
                     </div>
                     <div class="form-group">
                         {!! Form::select('status',['all' => 'Select Status','1'=>'Active','0'=>'Inactive'],request('status'),['class'=>'form-control','onChange'=>'form.submit()']) !!}

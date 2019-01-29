@@ -32,8 +32,9 @@
                                     {!! Form::label('parent_id', 'Parent Category') !!}
                                     {!! Form::select('parent_id', $mainCategories, null,['placeholder' => 'Choose a parent category','class'=>'form-control']); !!}
                                 @elseif($category->parent_id != 0)
+                                    @php  $noChildArrayOption=[]; $noChildArrayOption['0'] = 'Make it a main category';$cats = $noChildArrayOption + $mainCategories;  @endphp
                                     {!! Form::label('parent_id', 'Parent Category') !!}
-                                    {!! Form::select('parent_id', array_merge(['0' => 'Make it a main category'],$mainCategories), null,['class'=>'form-control']); !!}
+                                    {!! Form::select('parent_id', $cats, null,['class'=>'form-control']); !!}
                                 @endif
                             </div>
 
@@ -45,7 +46,6 @@
                     {!! Form::file('photo_id',['class'=>'custom-file-input']); !!}
                     {!! Form::label('photo_id', 'Category Image',['class'=>'custom-file-label']) !!}
                 </div>
-                {{ Form::hidden('type', 'products') }}
                 <button type="submit"  class="add-category btn btn-primary btn-sm"><i class="fas fa-edit"></i> Edit category</button>
                 {!! Form::close() !!}
             </div>
