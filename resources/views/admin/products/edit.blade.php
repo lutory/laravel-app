@@ -45,12 +45,6 @@
                     {!! $errors->first('body','<p class="text-danger">:message</p>') !!}
                 </div>
 
-                {{--<div class="form-group">--}}
-                {{--{!! Form::label('category_id', 'Category') !!}--}}
-                {{--{!! Form::select('category_id', $categories, null,['placeholder' => 'Choose a category','class'=>'form-control']); !!}--}}
-                {{--{!! $errors->first('category_id','<p class="text-danger">:message</p>') !!}--}}
-                {{--</div>--}}
-
                 <div class="form-group">
                     {!! Form::label('status', 'Status<span class="text-danger">*</span>',[],false) !!}
                     {!! Form::select('status', ['1' => 'Active', '0' => 'Inactive'], 1,['class'=>'form-control']); !!}
@@ -61,10 +55,11 @@
                     {!! Form::label('photo_id', 'Featured Image',['class'=>'custom-file-label']) !!}
                 </div>
 
+                {{ Form::hidden('categories[]', null, array('id' => 'catsIds')) }}
                 {{ Form::hidden('tags[]', null, array('id' => 'tagsIds')) }}
                 {{ Form::hidden('gallery[]', null, array('id' => 'imagesPaths')) }}
 
-                <button type="submit" class="btn btn-primary"><i class="fas fa-edit"></i> Edit product</button>
+                <button type="submit" data-target="#alert" data-message="Select at least one category" id="addItem" class="btn btn-primary"><i class="fas fa-edit"></i> Edit product</button>
 
                 {!! Form::close() !!}
                 {!! Form::open(['method' => 'DELETE','action' => ['AdminProductsController@destroy',$product->id],'id'=>'deleteProductForm', 'class'=>'d-inline float-right']) !!}
@@ -134,6 +129,35 @@
         <div class="card mt-3">
 
             <div class="card-body">
+                <h5 class="card-title">Categories<span class="text-danger">*</span> </h5>
+                <hr>
+
+                @if( count($categories)>0)
+                    <div class="categories-list">
+
+                        <ul class="main-categories">
+                            @foreach($categories as $category)
+                                <li>
+                                    <label> @if(!isset($category['childs'])) <input type="checkbox" @if($product->categories->contains('id',$category['id'] ) ) checked  @endif  data-id="{{$category['id']}}" /> @endif {{$category['name']}}</label>
+                                    @if( isset($category['childs']) )
+                                        <ul class="main-categories">
+                                            @foreach( $category['childs'] as $child)
+                                                <li><label><input type="checkbox" @if($product->categories->contains('id',$child['id'] ) ) checked  @endif data-id="{{$child['id']}}">{{$child['name']}}</label></li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @else
+                    <p>No categories yet.</p>
+                @endif
+            </div>
+        </div>
+        <div class="card mt-3">
+
+            <div class="card-body">
 
                 <h5 class="card-title">Tags for product:</h5>
                 <div id="productTags">
@@ -160,16 +184,18 @@
 
                 <div class="image-upload-holder">
 
-                    @if($product->images)
+
                         <div class="images-preview" id="galleryHolder">
-                            @foreach($product->images as $image)
-                                <span>
-                                <img src="{{asset($image->path)}}" data-src="{{$image->path}}" alt="">
-                                <i class="fas fa-trash-alt remove-image"></i>
-                            </span>
-                            @endforeach
+                            @if( $product->images )
+                                @foreach($product->images as $image)
+                                 <span>
+                                    <img src="{{asset($image->path)}}" data-src="{{$image->path}}" alt="">
+                                    <i class="fas fa-trash-alt remove-image"></i>
+                                </span>
+                                @endforeach
+                            @endif
                         </div>
-                    @endif
+
 
                     <div class="input-group d-inline">
                        <span class="input-group-btn">
@@ -190,9 +216,44 @@
 @endsection
 @section('scripts')
     @include('inc.deletemodal')
+    @include('inc.alertmodal')
     @include('inc.admin.tinyMce')
     <script>
         $(document).ready(function () {
+
+            // Add checked categories ids to form
+
+            var selectedCatsIds = [];
+
+            $(".categories-list input").each(function () {
+                if( $(this).is(":checked") ){
+                    selectedCatsIds.push( $(this).data('id') )
+                }
+            });
+            $("#catsIds").val(selectedCatsIds);
+
+            $(".categories-list input").on('change', function (ev) {
+                var id = $(this).data('id');
+                var idx = $.inArray(id, selectedCatsIds);
+                if (idx == -1) {
+                    selectedCatsIds.push(id);
+                } else {
+                    selectedCatsIds.splice(idx, 1);
+                }
+                $("#catsIds").val(selectedCatsIds);
+            });
+
+            // Check or categories before submit
+
+            $("#addItem").on('click', function (ev) {
+                ev.preventDefault();
+                if( selectedCatsIds.length<1 ){
+                    $("#alert").modal('show');
+                }
+                else{
+                    $(this).closest('form').submit();
+                }
+            });
 
             // Change comment status
 

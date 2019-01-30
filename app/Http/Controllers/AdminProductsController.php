@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
 use App\Http\Requests\AdminProductsRequest;
 use Illuminate\Http\Request;
 use App\Photo;
@@ -15,18 +16,22 @@ class AdminProductsController extends Controller
 
     public function index(Request $request)
     {
+        $categories = Category::getCategoryTreeByType('products');
+
         $search = $request->get('search');
-        //$category = $request->get('category') != '' ? $request->get('category') : "";
+        $category = $request->get('category') != '' ? $request->get('category') : "";
         $field = $request->get('field') != '' ? $request->get('field') : 'created_at';
         $sort = $request->get('sort') != '' ? $request->get('sort') : 'desc';
         $status = $request->get('status') != '' ? $request->get('status') : 'all';
 
         $products = new Product();
-//        if($category){
-//            $products = $products->with('category')->whereHas('category', function ($q) use ($category) {
-//                $q->where('name', 'LIKE', "%$category%");
-//            });
-//        }
+        if($category){
+
+            $products = $products->with('categories')->whereHas('categories', function ($q) use ($category) {
+                $q->where('id', $category);
+            });
+
+        }
         if($status != 'all'){
             $products = $products->where('status', '=', $status );
         }
@@ -35,19 +40,19 @@ class AdminProductsController extends Controller
             ->where('title', 'like', '%' . $search . '%')
             ->orderBy($field, $sort)
             ->paginate(5)
-            ->withPath('?search=' . $search .'&status=' . $status  . '&field=' . $field . '&sort=' . $sort);
-//            ->withPath('?search=' . $search . '&category=' . $category .'&status=' . $status  . '&field=' . $field . '&sort=' . $sort);
+            ->withPath('?search=' . $search . '&category=' . $category .'&status=' . $status  . '&field=' . $field . '&sort=' . $sort);
 
         //$categories = PostsCategory::pluck('name','name')->all();
-        
-        return view('admin.products.index', compact(['products']));
+
+        return view('admin.products.index', compact(['products','categories']));
     }
     
     public function create()
     {
-        //$categories = PostsCategory::pluck('name','id')->all();
+        $categories = Category::getCategoryTreeByType('products');
+        //print_r($categories);exit;
         $tags = Tag::orderBy('name','asc')->pluck('name','id')->all();
-        return view('admin.products.create',compact('tags'));
+        return view('admin.products.create',compact('tags','categories'));
     }
 
     public function show()
@@ -78,13 +83,13 @@ class AdminProductsController extends Controller
 
         $product->save();
 
-        if($request->input('tags')){
+        if($request->input('tags')[0]  ){
             $tagsIds = $request->input('tags');
             $integerIDs = array_map('intval', explode(',',$tagsIds[0]));
             $product->tags()->attach($integerIDs);
         }
 
-        if($request->input('gallery')){
+        if($request->input('gallery')[0]){
             $imagesPaths = explode(',',$request->input('gallery')[0]);
 
             foreach ($imagesPaths as $path){
@@ -94,24 +99,31 @@ class AdminProductsController extends Controller
 
         }
 
+        if($request->input('categories')[0]){
+            $catsIds = $request->input('categories');
+            $integerIDs = array_map('intval', explode(',',$catsIds[0]));
+            //dd($integerIDs);exit;
+            $product->categories()->attach($integerIDs);
+        }
+
         return redirect('/admin/products');
     }
 
     public function edit($id)
     {
         $product = Product::findOrFail($id);
-        //$categories = PostsCategory::pluck('name','id')->all();
+        $categories = Category::getCategoryTreeByType('products');
         $tags = Tag::all()->except($product->tags()->pluck('id')->toArray());
         $comments = $product->comments()->paginate(5);
 
         //dd($product);exit;
 
-        return view('/admin/products/edit', compact('product','tags','comments'));
+        return view('/admin/products/edit', compact('product','tags','comments','categories'));
     }
     
     public function update(AdminProductsRequest $request, $id)
     {
-        //dd($request->all());exit;
+       // dd($request->all());exit;
         $product = Product::findOrFail($id);
         $product->title = $request->input('title');
         $product->body = $request->input('body');
@@ -120,7 +132,6 @@ class AdminProductsController extends Controller
         $product->old_price = $request->input('old_price');
         $product->quantity = $request->input('quantity');
         $product->published_on = $request->input('published_on') ? $request->input('published_on' ) : date('Y-m-d H:i:s');
-        //$product->category_id = $request->input('category_id');
 
         if( $file = $request->file('photo_id') ){
             $name = time().$file->getClientOriginalName();
@@ -136,25 +147,40 @@ class AdminProductsController extends Controller
                 $product->photo_id = $photo->id;
             }
         }
-        if($request->input('tags')){
-            $tagsIds = $request->input('tags');
+
+
+
+        $tagsIds = $request->input('tags');
+        if($tagsIds[0]){
             $integerIDs = array_map('intval', explode(',',$tagsIds[0]));
-
             $product->tags()->sync($integerIDs);
-
         }
-        if($request->input('gallery')){
+        else{
+            $product->tags()->detach();
+        }
 
-            $product->images()->delete();
 
+        $product->images()->delete();
+        if($request->input('gallery')[0]){
             $imagesPaths = explode(',',$request->input('gallery')[0]);
-
             foreach ($imagesPaths as $path){
                 $image = new Image(['path'=>$path]);
                 $product->images()->save($image);
             }
-
         }
+
+
+        $catsIds = $request->input('categories');
+        if($catsIds[0]){
+            $integerIDs = array_map('intval', explode(',',$catsIds[0]));
+            $product->categories()->sync($integerIDs);
+        }
+        else{
+            $product->categories()->detach();
+        }
+
+
+
         Session::flash('edited_product',$product->title. ' has been edited');
         $product->save();
 
@@ -164,6 +190,9 @@ class AdminProductsController extends Controller
     public function destroy($id)
     {
         $product = Product::findOrfail($id);
+        $product->tags()->detach();
+        $product->categories()->detach();
+        $product->comments()->delete();
         if($product->photo){
             unlink(public_path().$product->photo->getProductImagePath($product->photo->file));
         }

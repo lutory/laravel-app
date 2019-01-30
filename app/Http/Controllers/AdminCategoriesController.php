@@ -24,10 +24,12 @@ class AdminCategoriesController extends Controller
 
     public function index()
     {
-        $categoriesArr = Category::with('photo')->whereType($this->categoryType)->orderBy('order', 'asc')->get()->toArray();
+        $type = $this->categoryType;
+        $categoriesArr = Category::with('photo')->with($type)->whereType($this->categoryType)->orderBy('order', 'asc')->get()->toArray();
         $categories = $this->_buildTree($categoriesArr);
         $mainCategories = $this->_mainCategories($categoriesArr);
-        $type = $this->categoryType;
+
+        //dd($categoriesArr);
         return view('admin.categories.index', compact(['categories','mainCategories','type']));
     }
 
@@ -96,10 +98,10 @@ class AdminCategoriesController extends Controller
     public function edit($id)
     {
         $category = Category::findOrFail($id);
-
+        $type = $this->categoryType;
         $mainCategories = Category::whereParentId(0)->whereType($this->categoryType)->where('id','!=',$id)->pluck("name", "id")->toArray();
         $children = Category::whereParentId($id)->count();
-        return view('/admin/categories/edit', compact('category','mainCategories','children'));
+        return view('/admin/categories/edit', compact('category','type', 'mainCategories','children'));
     }
 
     /**

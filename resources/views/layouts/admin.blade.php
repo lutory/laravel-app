@@ -33,7 +33,7 @@
 </div>
 {{--<script src="/js/app.js"></script>--}}
 <script src="/js/vendor/vendor.bundle.base.js"></script>
-<script src="/js/vendor/vendor.bundle.addons.js"></script>
+{{--<script src="/js/vendor/vendor.bundle.addons.js"></script>--}}
 <script src="/js/vendor/off-canvas.js"></script>
 <script src="/js/vendor/misc.js"></script>
 @section('scripts')

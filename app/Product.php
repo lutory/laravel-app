@@ -37,6 +37,10 @@ class Product extends Model
         return $this->morphMany('App\Comment', 'commentable')->latest();
     }
 
+    public function categories()
+    {
+        return $this->morphToMany('App\Category', 'categoryable');
+    }
 //    public function getPriceAttribute($price)
 //    {
 //        return $price.' лв.';

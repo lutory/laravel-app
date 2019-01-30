@@ -25,6 +25,9 @@
                                     {{--@if($category['photo'])<img src="/images/categories/{{ $category['photo']['file'] }}"/> @endif--}}
                                     <a href="{{route($type.'.categories.edit',$category['id'])}}">{{$category['name']}}</a>
                                     @if($category['status'] == '1') <span class="badge badge-success">Active</span> @else <span class="badge badge-danger">Inactive</span>@endif
+                                    @if( !isset( $category['childs'] ) )
+                                        <span class="badge badge-dark">{{ count($category[$type]) . " ".$type }}</span>
+                                    @endif
                                 </p>
                                 <div class="handles float-right">
                                     <a href="javascript:void(0)" class="btn btn-sm btn-dark move-cat"><i class="fas fa-arrows-alt"></i></a>
@@ -37,6 +40,7 @@
                                             <p class="float-left mb-0">
                                                 <a href="{{route($type.'.categories.edit',$child['id'])}}">{{$child['name']}}</a>
                                                 @if($child['status'] == '1') <span class="badge badge-success">Active</span> @else <span class="badge badge-danger">Inactive</span>@endif
+                                                <span class="badge badge-dark">{{ count($child[$type]) . " ".$type }}</span>
                                             </p>
                                             <div class="handles float-right">
                                                 <a href="javascript:void(0)" class="btn btn-sm btn-dark  move-cat"><i class="fas fa-arrows-alt"></i></a>

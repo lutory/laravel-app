@@ -25,8 +25,7 @@ class AdminPostsRequest extends FormRequest
     {
         return [
             'title' => 'required',
-            'body' => 'required',
-            'category_id' => 'required',
+            'body' => 'required'
         ];
     }
 }

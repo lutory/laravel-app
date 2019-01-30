@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
 use App\Http\Requests\AdminPostsRequest;
 use App\Photo;
 use App\Post;
@@ -22,6 +23,8 @@ class AdminPostsController extends Controller
      */
     public function index(Request $request)
     {
+        $categories = Category::getCategoryTreeByType('posts');
+
         $search = $request->get('search');
         $category = $request->get('category') != '' ? $request->get('category') : "";
         $field = $request->get('field') != '' ? $request->get('field') : 'created_at';
@@ -30,9 +33,11 @@ class AdminPostsController extends Controller
 
         $posts = new Post();
         if($category){
-            $posts = $posts->with('category')->whereHas('category', function ($q) use ($category) {
-                $q->where('name', 'LIKE', "%$category%");
+
+            $posts = $posts->with('categories')->whereHas('categories', function ($q) use ($category) {
+                $q->where('id', $category);
             });
+
         }
         if($status != 'all'){
             $posts = $posts->where('status', '=', $status );
@@ -44,7 +49,7 @@ class AdminPostsController extends Controller
             ->paginate(5)
             ->withPath('?search=' . $search . '&category=' . $category .'&status=' . $status  . '&field=' . $field . '&sort=' . $sort);
 
-        $categories = PostsCategory::pluck('name','name')->all();
+
         $users = User::pluck('name','id')->all();
         return view('admin.posts.index', compact(['posts','users','categories']));
     }
@@ -56,7 +61,7 @@ class AdminPostsController extends Controller
      */
     public function create()
     {
-        $categories = PostsCategory::pluck('name','id')->all();
+        $categories = Category::getCategoryTreeByType('posts');
         $tags = Tag::orderBy('name','asc')->pluck('name','id')->all();
         return view('admin.posts.create',compact('categories','tags'));
     }
@@ -75,7 +80,6 @@ class AdminPostsController extends Controller
         $post->title = $request->input('title');
         $post->body = $request->input('body');
         $post->status = $request->input('status');
-        $post->category_id = $request->input('category_id');
         $post->user_id = auth()->user()->id;
 
         if( $file = $request->file('photo_id') ){
@@ -89,15 +93,13 @@ class AdminPostsController extends Controller
 
         $post->save();
 
-        if($request->input('tags')){
+        if($request->input('tags')[0]  ){
             $tagsIds = $request->input('tags');
             $integerIDs = array_map('intval', explode(',',$tagsIds[0]));
-
             $post->tags()->attach($integerIDs);
-
         }
 
-        if($request->input('gallery')){
+        if($request->input('gallery')[0]){
             $imagesPaths = explode(',',$request->input('gallery')[0]);
 
             foreach ($imagesPaths as $path){
@@ -107,7 +109,12 @@ class AdminPostsController extends Controller
 
         }
 
-
+        if($request->input('categories')[0]){
+            $catsIds = $request->input('categories');
+            $integerIDs = array_map('intval', explode(',',$catsIds[0]));
+            //dd($integerIDs);exit;
+            $post->categories()->attach($integerIDs);
+        }
 
         return redirect('/admin/posts');
     }
@@ -132,7 +139,7 @@ class AdminPostsController extends Controller
     public function edit($id)
     {
         $post = Post::findOrFail($id);
-        $categories = PostsCategory::pluck('name','id')->all();
+        $categories = Category::getCategoryTreeByType('posts');
         $tags = Tag::all()->except($post->tags()->pluck('id')->toArray());
         $comments = $post->comments()->paginate(5);
 
@@ -155,7 +162,6 @@ class AdminPostsController extends Controller
         $post->title = $request->input('title');
         $post->body = $request->input('body');
         $post->status = $request->input('status');
-        $post->category_id = $request->input('category_id');
 
         if( $file = $request->file('photo_id') ){
             $name = time().$file->getClientOriginalName();
@@ -171,24 +177,33 @@ class AdminPostsController extends Controller
                 $post->photo_id = $photo->id;
             }
         }
-        if($request->input('tags')){
-            $tagsIds = $request->input('tags');
+        $tagsIds = $request->input('tags');
+        if($tagsIds[0]){
             $integerIDs = array_map('intval', explode(',',$tagsIds[0]));
-
             $post->tags()->sync($integerIDs);
-
         }
-        if($request->input('gallery')){
+        else{
+            $post->tags()->detach();
+        }
 
-            $post->images()->delete();
 
+        $post->images()->delete();
+        if($request->input('gallery')[0]){
             $imagesPaths = explode(',',$request->input('gallery')[0]);
-
             foreach ($imagesPaths as $path){
                 $image = new Image(['path'=>$path]);
                 $post->images()->save($image);
             }
+        }
 
+
+        $catsIds = $request->input('categories');
+        if($catsIds[0]){
+            $integerIDs = array_map('intval', explode(',',$catsIds[0]));
+            $post->categories()->sync($integerIDs);
+        }
+        else{
+            $post->categories()->detach();
         }
         Session::flash('edited_post',$post->title. ' has been edited');
         $post->save();
@@ -205,6 +220,10 @@ class AdminPostsController extends Controller
     public function destroy($id)
     {
         $post = Post::findOrfail($id);
+        $post->tags()->detach();
+        $post->categories()->detach();
+        $post->comments()->delete();
+
         if($post->photo){
             unlink(public_path().$post->photo->getPostImagePath($post->photo->file));
         }

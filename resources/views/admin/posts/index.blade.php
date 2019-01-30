@@ -18,8 +18,18 @@
                 {!! Form::open(['method'=>'GET','class="form-inline"']) !!}
                 <div class="row">
                     <div class="form-group m-3">
-                        @php  $noCatArrayOption=[]; $noCatArrayOption['0'] = 'Select Category';$cats = $noCatArrayOption + $categories;  @endphp
-                        {!! Form::select('category',$cats,request('category'),['class'=>'form-control','onChange'=>'form.submit()']) !!}
+                        <select class="form-control" name="category" onchange="form.submit()" >
+                            <option value="0">Select category</option>
+                            @foreach($categories as $category)
+                                <option value="{{$category['id']}}" @if( request('category') == $category['id'] ) selected @endif   @if( isset($category['childs']) ) disabled @endif >{{$category['name']}}</option>
+                                @if( isset($category['childs']) )
+                                    @foreach($category['childs'] as $child)
+                                        <option value="{{$child['id']}}" @if( request('category') == $child['id'] ) selected @endif > &nbsp;&nbsp; - {{$child['name']}}</option>
+                                    @endforeach
+                                @endif
+                            @endforeach
+                        </select>
+
                     </div>
                     <div class="form-group">
                         {!! Form::select('status',['all' => 'Select Status','1'=>'Active','0'=>'Inactive'],request('status'),['class'=>'form-control','onChange'=>'form.submit()']) !!}
@@ -60,7 +70,6 @@
                                     <a href="{{route('posts.index')}}?search={{request('search')}}&category={{request('category')}}&status={{request('status')}}&field=title&sort={{request('sort')=='asc'?'desc':'asc'}}">Title {!!request('field')=='title'?(request('sort')=='asc'?'<i class="fas fa-angle-up"></i>':'<i class="fas fa-angle-down"></i>'):''!!}</a>
                                 </th>
                                 <th>User</th>
-                                <th>Category</th>
                                 <th>
                                     <a href="{{route('posts.index')}}?search={{request('search')}}&category={{request('category')}}&status={{request('status')}}&field=created_at&sort={{request('sort')=='asc'?'desc':'asc'}}">Created {!!request('field')=='created_at'?(request('sort')=='asc'?'<i class="fas fa-angle-up"></i>':'<i class="fas fa-angle-down"></i>'):''!!}</a>
                                 </th>
@@ -75,7 +84,6 @@
                                     <td>@if($post->photo)<img src="{{ $post->photo->getPostImagePath($post->photo->file) }}"/> @endif </td>
                                     <td><a href="{{ route('posts.edit',['id'=>$post->id]) }}">{{ $post->title }}</a> </td>
                                     <td>{{ $post->user->name  }}</td>
-                                    <td>{{ $post->category->name  }}</td>
                                     <td>{{ $post->created_at->diffForHumans()  }}</td>
                                     <td>{{ ($post->updated_at) ? $post->updated_at->diffForHumans() : "-"   }}</td>
                                     <td>@if($post->status == '1') <span class="badge badge-success">Active</span> @else <span class="badge badge-danger">Inactive</span> @endif</td>

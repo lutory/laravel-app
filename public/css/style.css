@@ -16371,3 +16371,18 @@ ul {
     margin-left: 15px;
     display: none;
 }
+.categories-list ul{
+  list-style:none;
+}
+.categories-list input{
+  margin-right: 5px;
+  vertical-align: middle;
+}
+.categories-list label{
+  margin-bottom: 0;
+  cursor: pointer;
+}
+.categories-list>ul.main-categories{
+  margin-left: 0;
+  padding-left: 0;
+}

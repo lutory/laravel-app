@@ -64,11 +64,11 @@
         <div class="card mt-3">
 
             <div class="card-body">
-                <h5>Posts:</h5>
-                @if(count($category->posts) > 0)
+                <h5>{{ucfirst($type)}}:</h5>
+                @if(count($category->$type) > 0)
                     <ul class="list-star">
-                        @foreach($category->posts as $post)
-                            <li><a href="/admin/posts/{{$post->id}}/edit" target="_blank" >{{$post->title}}</a></li>
+                        @foreach($category->$type as $item)
+                            <li><a href="/admin/{{$type}}/{{$item->id}}/edit" target="_blank" >{{$item->title}}</a></li>
                         @endforeach
                     </ul>
                 @else
