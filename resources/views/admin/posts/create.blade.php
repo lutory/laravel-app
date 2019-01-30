@@ -11,25 +11,25 @@
                 <hr>
                 {!! Form::open(['method' => 'POST','action' => 'AdminPostsController@store','files'=> true]) !!}
                 <div class="form-group">
-                    {!! Form::label('title', 'Title') !!}
+                    {!! Form::label('title', 'Title<span class="text-danger">*</span>',[],false) !!}
                     {!! Form::text('title', null,["class"=>"form-control"]) !!}
                     {!! $errors->first('title','<p class="text-danger">:message</p>') !!}
                 </div>
 
                 <div class="form-group">
-                    {!! Form::label('body', 'Body') !!}
+                    {!! Form::label('body', 'Body<span class="text-danger">*</span>',[],false) !!}
                     {!! Form::textarea('body', null,["class"=>"form-control tiny-mce"]) !!}
                     {!! $errors->first('body','<p class="text-danger">:message</p>') !!}
                 </div>
 
                 <div class="form-group">
-                    {!! Form::label('category_id', 'Category') !!}
+                    {!! Form::label('category_id', 'Category<span class="text-danger">*</span>',[],false) !!}
                     {!! Form::select('category_id', $categories, null,['placeholder' => 'Choose a category','class'=>'form-control']); !!}
                     {!! $errors->first('category_id','<p class="text-danger">:message</p>') !!}
                 </div>
 
                 <div class="form-group">
-                    {!! Form::label('status', 'Status') !!}
+                    {!! Form::label('status', 'Status<span class="text-danger">*</span>',[],false) !!}
                     {!! Form::select('status', ['1' => 'Active', '0' => 'Inactive'], 1,['class'=>'form-control']); !!}
                 </div>
 

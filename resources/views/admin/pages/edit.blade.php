@@ -11,19 +11,19 @@
                 {!! Form::model($page,['method' => 'PATCH','action' => ['AdminPagesController@update',$page->id],'files'=> true, 'class'=>'d-inline']) !!}
 
                 <div class="form-group">
-                    {!! Form::label('title', 'Title') !!}
+                    {!! Form::label('title', 'Title<span class="text-danger">*</span>',[],false) !!}
                     {!! Form::text('title', null,["class"=>"form-control"]) !!}
                     {!! $errors->first('title','<p class="text-danger">:message</p>') !!}
                 </div>
 
                 <div class="form-group">
-                    {!! Form::label('slug', 'Slug') !!}
+                    {!! Form::label('slug', 'Slug<span class="text-danger">*</span>',[],false) !!}
                     {!! Form::text('slug', null,["class"=>"form-control"]) !!}
                     {!! $errors->first('slug','<p class="text-danger">:message</p>') !!}
                 </div>
 
                 <div class="form-group">
-                    {!! Form::label('body', 'Body') !!}
+                    {!! Form::label('body', 'Body<span class="text-danger">*</span>',[],false) !!}
                     {!! Form::textarea('body', null,["class"=>"form-control tiny-mce"]) !!}
                     {!! $errors->first('body','<p class="text-danger">:message</p>') !!}
                 </div>
@@ -51,7 +51,7 @@
             <div class="card-body">
                 <h5 class="card-title">Featured Image:</h5>
                 <img width="100%"
-                     src="{{ ($page->photo) ?  $page->photo->getPageImagePath($page->photo->file) : "/images/profile/default.jpg"}}"
+                     src="{{ ($page->photo) ?  $page->photo->getPageImagePath($page->photo->file) : "/images/default.png"}}"
                      alt="">
             </div>
         </div>

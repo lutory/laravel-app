@@ -126,7 +126,7 @@
             <div class="card-body">
                 <h5 class="card-title">Featured Image:</h5>
                 <img width="100%"
-                     src="{{ ($product->photo) ?  $product->photo->getProductImagePath($product->photo->file) : "/images/profile/default.jpg"}}"
+                     src="{{ ($product->photo) ?  $product->photo->getProductImagePath($product->photo->file) : "/images/default.png"}}"
                      alt="">
 
             </div>

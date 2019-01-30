@@ -55,6 +55,9 @@ class AdminTagsController extends Controller
         if($tag->posts){
             $tag->posts()->detach();
         }
+        if($tag->products){
+            $tag->products()->detach();
+        }
         $tag->delete();
 
 
@@ -64,7 +67,7 @@ class AdminTagsController extends Controller
 
     public function search( Request $request ){
 
-        $tags = Tag::with('posts')->where('name', 'LIKE', '%'.$request->search.'%')->get();
+        $tags = Tag::with('posts')->with('products')->where('name', 'LIKE', '%'.$request->search.'%')->get();
 
         return response()->json(array('tags'=> $tags), 200);
     }

@@ -10,7 +10,7 @@
                 <hr>
                 {!! Form::model($tag,['method' => 'PATCH','action' => ['AdminTagsController@update',$tag->id],'class'=>'d-inline']) !!}
                 <div class="form-group">
-                    {!! Form::label('name', 'Name') !!}
+                    {!! Form::label('name', 'Name<span class="text-danger">*</span>',[],false) !!}
                     {!! Form::text('name', null,["class"=>"form-control"]) !!}
                     {!! $errors->first('name','<p class="text-danger">:message</p>') !!}
                 </div>
@@ -24,7 +24,7 @@
         </div>
     </div>
 
-    <div class="col-md-4 grid-margin  stretch-card">
+    <div class="col-md-4 grid-margin ">
         <div class="card">
 
             <div class="card-body">
@@ -37,6 +37,21 @@
                     </ul>
                 @else
                     <p>No posts yet.</p>
+                @endif
+            </div>
+        </div>
+        <div class="card mt-3">
+
+            <div class="card-body">
+                <h2>Products:</h2>
+                @if(count($tag->products) > 0)
+                    <ul class="list-star">
+                        @foreach($tag->products as $product)
+                            <li><a href="/admin/products/{{$product->id}}/edit" target="_blank" >{{$product->title}}</a></li>
+                        @endforeach
+                    </ul>
+                @else
+                    <p>No products yet.</p>
                 @endif
             </div>
         </div>

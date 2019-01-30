@@ -23,8 +23,8 @@
                         <tr>
                             <th>Id</th>
                             <th>Name</th>
-                            <th>Posts</th>
-                            <th>Products (to do)</th>
+                            <th class="text-center">Posts with tag</th>
+                            <th class="text-center">Products with tag</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -32,8 +32,8 @@
                             <tr>
                                 <td>{{ $tag->id }}</td>
                                 <td><a href="{{route('tags.edit',$tag->id)}}">{{ $tag->name }}</a></td>
-                                <td>{{ $tag->posts->count() }}</td>
-                                <td>0</td>
+                                <td class="text-center">{{ $tag->posts->count() }}</td>
+                                <td class="text-center">{{ $tag->products->count() }}</td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -53,7 +53,7 @@
                 <h2>Add tag</h2>
                 {!! Form::open(['method' => 'POST','action' => 'AdminTagsController@store']) !!}
                 <div class="form-group">
-                    {!! Form::label('name', 'Name') !!}
+                    {!! Form::label('name', 'Name<span class="text-danger">*</span>',[],false) !!}
                     {!! Form::text('name', null,["class"=>"form-control"]) !!}
                     {!! $errors->first('name','<p class="text-danger">:message</p>') !!}
                 </div>
@@ -95,8 +95,8 @@
                                 output += '<tr>' +
                                     '<td>' + tag.id + '</td>' +
                                     '<td><a href="/admin/tags/' + tag.id + '/edit">' + tag.name + '</a></td>' +
-                                    '<td>' + tag.posts.length + '</td>' +
-                                    '<td>0</td>' +
+                                    '<td class="text-center">' + tag.posts.length + '</td>' +
+                                    '<td class="text-center">' + tag.products.length + '</td>' +
                                     '</tr>';
                             });
                             table.find('tbody').html(output);

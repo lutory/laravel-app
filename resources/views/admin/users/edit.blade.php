@@ -11,7 +11,7 @@
                 {!! Form::model($user,['method' => 'PATCH','action' => ['AdminUsersController@update',$user->id],'files'=> true,'class'=>'d-inline']) !!}
 
                 <div class="form-group">
-                    {!! Form::label('name', 'Name') !!}
+                    {!! Form::label('name', 'Name<span class="text-danger">*</span>',[],false) !!}
                     {!! Form::text('name', null,["class"=>"form-control"]) !!}
                     {!! $errors->first('name','<p class="error-message">:message</p>') !!}
                 </div>
@@ -23,19 +23,19 @@
                 </div>
 
                 <div class="form-group">
-                    {!! Form::label('email', 'Email') !!}
+                    {!! Form::label('email', 'Email<span class="text-danger">*</span>',[],false) !!}
                     {!! Form::email('email', null,["class"=>"form-control"]) !!}
                     {!! $errors->first('email','<p class="text-danger">:message</p>') !!}
                 </div>
 
                 <div class="form-group">
-                    {!! Form::label('role_id', 'Role') !!}
+                    {!! Form::label('role_id', 'Role<span class="text-danger">*</span>',[],false) !!}
                     {!! Form::select('role_id', $roles, null,['placeholder' => 'Pick a role','class'=>'form-control']); !!}
                     {!! $errors->first('role_id','<p class="text-danger">:message</p>') !!}
                 </div>
 
                 <div class="form-group">
-                    {!! Form::label('is_active', 'Status') !!}
+                    {!! Form::label('is_active', 'Status<span class="text-danger">*</span>',[],false) !!}
                     {!! Form::select('is_active', ['1' => 'Active', '0' => 'Inactive'],null,['class'=>'form-control']); !!}
                 </div>
 

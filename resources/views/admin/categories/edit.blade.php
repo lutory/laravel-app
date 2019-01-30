@@ -57,7 +57,7 @@
             <div class="card-body">
                 <h5 class="card-title">Featured Image:</h5>
                 <img width="100%"
-                     src="{{ ($category->photo) ?  $category->photo->getCategoryImagePath($category->photo->file) : "/images/profile/default.jpg"}}"
+                     src="{{ ($category->photo) ?  $category->photo->getCategoryImagePath($category->photo->file) : "/images/default.png"}}"
                      alt="">
             </div>
         </div>
