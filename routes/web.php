@@ -28,8 +28,6 @@ Route::get('/admin', function(){
 Route::group(['middleware'=>'admin'], function(){
     Route::resource('/admin/users','AdminUsersController');
 
-    Route::resource('/admin/post-categories','AdminPostsCategoriesController');
-    Route::post('/admin/post-categories/search','AdminPostsCategoriesController@search');
     Route::resource('/admin/tags','AdminTagsController');
     Route::post('/admin/tags/search','AdminTagsController@search');
     Route::resource('/admin/pages','AdminPagesController');
