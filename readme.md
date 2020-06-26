@@ -7,7 +7,7 @@ You can test it [here](http://lutory.net/laravel-admin/public/), using the follo
 
 ---- Notes:
 
-- The system is still in development, so bug are possible
+- The system is still in development, so bugs are possible
 - It will include the front part also, once the Admin is complete
 
 # Functionality:
